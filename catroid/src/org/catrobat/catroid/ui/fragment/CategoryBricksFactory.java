@@ -74,6 +74,8 @@ import org.catrobat.catroid.content.bricks.PointInDirectionBrick;
 import org.catrobat.catroid.content.bricks.PointInDirectionBrick.Direction;
 import org.catrobat.catroid.content.bricks.PointToBrick;
 import org.catrobat.catroid.content.bricks.RepeatBrick;
+import org.catrobat.catroid.content.bricks.SayBrick;
+import org.catrobat.catroid.content.bricks.SayForBrick;
 import org.catrobat.catroid.content.bricks.SetBrightnessBrick;
 import org.catrobat.catroid.content.bricks.SetGhostEffectBrick;
 import org.catrobat.catroid.content.bricks.SetLookBrick;
@@ -85,6 +87,8 @@ import org.catrobat.catroid.content.bricks.SetYBrick;
 import org.catrobat.catroid.content.bricks.ShowBrick;
 import org.catrobat.catroid.content.bricks.SpeakBrick;
 import org.catrobat.catroid.content.bricks.StopAllSoundsBrick;
+import org.catrobat.catroid.content.bricks.ThinkBrick;
+import org.catrobat.catroid.content.bricks.ThinkForBrick;
 import org.catrobat.catroid.content.bricks.TurnLeftBrick;
 import org.catrobat.catroid.content.bricks.TurnRightBrick;
 import org.catrobat.catroid.content.bricks.VibrationBrick;
@@ -188,6 +192,7 @@ public class CategoryBricksFactory {
 
 	private List<Brick> setupLooksCategoryList() {
 		List<Brick> looksBrickList = new ArrayList<Brick>();
+
 		looksBrickList.add(new SetLookBrick());
 		looksBrickList.add(new NextLookBrick());
 		looksBrickList.add(new SetSizeToBrick(BrickValues.SET_SIZE_TO));
@@ -202,6 +207,10 @@ public class CategoryBricksFactory {
 		looksBrickList.add(new LedOffBrick());
 		looksBrickList.add(new LedOnBrick());
 		looksBrickList.add(new VibrationBrick(BrickValues.VIBRATE_MILLISECONDS));
+		looksBrickList.add(new SayForBrick(BrickValues.SAY, BrickValues.FOR));
+		looksBrickList.add(new SayBrick(BrickValues.SAY));
+		looksBrickList.add(new ThinkForBrick(BrickValues.THINK, BrickValues.FOR));
+		looksBrickList.add(new ThinkBrick(BrickValues.THINK));
 
 		return looksBrickList;
 	}

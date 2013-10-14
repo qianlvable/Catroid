@@ -384,6 +384,9 @@
     <string name="brick_led_on">Schalte Blitzlicht an</string>
     <string name="brick_led_off">Schalte Blitzlicht aus</string>
     <string name="brick_vibration">Vibrieren für</string>
+    <string name="brick_say">Sage</string>
+    <string name="for_label">für</string>
+    <string name="brick_think">Denke</string>
     <!--  -->
 
 
