@@ -360,13 +360,12 @@ public class ExtendedActions extends Actions {
 		return action;
 	}
 
-
-	//	public static ArduinoReceiveAction receiveArduinoVar(Sprite sprite) {
-	//		ArduinoReceiveAction action = action(ArduinoReceiveAction.class);
-	//		action.getPinNumber();
-	//		action.getPinValue();
-	//		return action;
-	//	}
+	public static ArduinoReceiveAction receiveArduinoVar(Sprite sprite) {
+		ArduinoReceiveAction action = action(ArduinoReceiveAction.class);
+		action.getPinNumber();
+		action.getPinValue();
+		return action;
+	}
 
 	public static TemporalAction droneTakeOff() {
 		return action(DroneTakeoffAction.class);

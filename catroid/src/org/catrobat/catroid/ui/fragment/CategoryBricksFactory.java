@@ -112,6 +112,8 @@ public class CategoryBricksFactory {
 			return setupVariablesCategoryList(sprite);
 		} else if (category.equals(context.getString(R.string.category_lego_nxt))) {
 			return setupLegoNxtCategoryList(sprite);
+		} else if (category.equals(context.getString(R.string.category_arduino))) {
+			return setupArduinoCategoryList(sprite);
 		} else if (category.equals(context.getString(R.string.category_drone))) {
 			return setupDroneCategoryList(sprite);
 		}
@@ -134,8 +136,6 @@ public class CategoryBricksFactory {
 		controlBrickList.add(new ForeverBrick(sprite));
 		controlBrickList.add(new IfLogicBeginBrick(sprite, 0));
 		controlBrickList.add(new RepeatBrick(sprite, BrickValues.REPEAT));
-
-		controlBrickList.add(new ArduinoSendBrick(sprite));
 
 		return controlBrickList;
 	}
@@ -222,6 +222,11 @@ public class CategoryBricksFactory {
 		return legoNXTBrickList;
 	}
 
+	private List<Brick> setupArduinoCategoryList(Sprite sprite) {
+		List<Brick> arduinoBrickList = new ArrayList<Brick>();
+		arduinoBrickList.add(new ArduinoSendBrick(sprite));
+		return arduinoBrickList;
+	}
 	private List<Brick> setupDroneCategoryList(Sprite sprite) {
 		List<Brick> droneBrickList = new ArrayList<Brick>();
 		droneBrickList.add(new DroneTakeOffBrick(sprite));
