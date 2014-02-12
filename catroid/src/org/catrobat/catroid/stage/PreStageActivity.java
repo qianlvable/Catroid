@@ -39,8 +39,7 @@ import android.widget.Toast;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.bluetooth.BluetoothManager;
-import org.catrobat.catroid.bluetooth.DeviceListActivity;
+import org.catrobat.catroid.bluetooth.BTDeviceActivity;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.Brick;
@@ -60,7 +59,6 @@ public class PreStageActivity extends BaseActivity {
 
 	private static final String TAG = PreStageActivity.class.getSimpleName();
 	private static final int REQUEST_ENABLE_BLUETOOTH = 2000;
-	private static final int REQUEST_CONNECT_DEVICE = 1000;
 	public static final int REQUEST_RESOURCES_INIT = 101;
 	public static final int REQUEST_TEXT_TO_SPEECH = 10;
 
@@ -98,6 +96,9 @@ public class PreStageActivity extends BaseActivity {
 		}
 
 		if ((requiredResources & Brick.BLUETOOTH_LEGO_NXT) > 0) {
+			if (legoNXT != null) {
+				legoNXT.destroyCommunicator();
+				legoNXT = null;
 			BluetoothManager bluetoothManager = new BluetoothManager(this);
 
 			int bluetoothState = bluetoothManager.activateBluetooth();
@@ -112,6 +113,7 @@ public class PreStageActivity extends BaseActivity {
 					resourceInitialized();
 				}
 			}
+			startBluetoothCommunication();
 		}
 
 		if ((requiredResources & Brick.ARDRONE_SUPPORT) > 0) {
@@ -209,12 +211,11 @@ public class PreStageActivity extends BaseActivity {
 		finish();
 	}
 
-	private void startBluetoothCommunication(boolean autoConnect) {
+	private void startBluetoothCommunication() {
 		connectingProgressDialog = ProgressDialog.show(this, "",
 				getResources().getString(R.string.connecting_please_wait), true);
-		Intent serverIntent = new Intent(this, DeviceListActivity.class);
-		serverIntent.putExtra(DeviceListActivity.AUTO_CONNECT, autoConnect);
-		this.startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+		Intent serverIntent = new Intent(this, BTDeviceActivity.class);
+		this.startActivityForResult(serverIntent, REQUEST_ENABLE_BLUETOOTH);
 	}
 
 	private int getRequiredRessources() {
@@ -230,34 +231,25 @@ public class PreStageActivity extends BaseActivity {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.i("bt", "requestcode " + requestCode + " result code" + resultCode);
+		Log.i("preStage", "requestcode " + requestCode + " result code " + resultCode);
 
 		switch (requestCode) {
 			case REQUEST_ENABLE_BLUETOOTH:
 				switch (resultCode) {
 					case Activity.RESULT_OK:
-						startBluetoothCommunication(true);
-						break;
-					case Activity.RESULT_CANCELED:
-						Toast.makeText(PreStageActivity.this, R.string.notification_blueth_err, Toast.LENGTH_LONG)
-								.show();
-						resourceFailed();
-						break;
-				}
-				break;
-
-			case REQUEST_CONNECT_DEVICE:
-				switch (resultCode) {
-					case Activity.RESULT_OK:
 						legoNXT = new LegoNXT(this, recieveHandler);
-						String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-						autoConnect = data.getExtras().getBoolean(DeviceListActivity.AUTO_CONNECT);
+						String address = data.getExtras().getString(BTDeviceActivity.EXTRA_DEVICE_ADDRESS);
 						legoNXT.startBTCommunicator(address);
 						break;
-
-					case Activity.RESULT_CANCELED:
+					case BTDeviceActivity.BLUETOOTH_ACTIVATION_CANCELED:
 						connectingProgressDialog.dismiss();
+						resourceFailed();
+						break;
+					case Activity.RESULT_CANCELED:
+						//Toast.makeText(PreStageActivity.this, R.string.notification_blueth_err, Toast.LENGTH_LONG)
+						//.show();
 						Toast.makeText(PreStageActivity.this, R.string.bt_connection_failed, Toast.LENGTH_LONG).show();
+						connectingProgressDialog.dismiss();
 						resourceFailed();
 						break;
 				}
@@ -338,7 +330,6 @@ public class PreStageActivity extends BaseActivity {
 			Log.i("bt", "message" + myMessage.getData().getInt("message"));
 			switch (myMessage.getData().getInt("message")) {
 				case LegoNXTBtCommunicator.STATE_CONNECTED:
-					//autoConnect = false;
 					connectingProgressDialog.dismiss();
 					resourceInitialized();
 					break;
@@ -347,11 +338,7 @@ public class PreStageActivity extends BaseActivity {
 					connectingProgressDialog.dismiss();
 					legoNXT.destroyCommunicator();
 					legoNXT = null;
-					if (autoConnect) {
-						startBluetoothCommunication(false);
-					} else {
-						resourceFailed();
-					}
+					resourceFailed();
 					break;
 				default:
 					return;
