@@ -124,6 +124,9 @@ public class PreStageActivity extends BaseActivity {
 			BTResourceQueue.add(bundle);
 			//startBluetoothCommunication();
 		}
+		if ((requiredResources & Brick.BLUETOOTH_ARDUINO) > 0) {
+			//Arduino Bluetooth Toast here
+		}
 
 		if ((requiredResources & Brick.ARDRONE_SUPPORT) > 0) {
 			droneInitializer = getDroneInitializer();
