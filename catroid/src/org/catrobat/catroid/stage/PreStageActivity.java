@@ -42,6 +42,7 @@ import org.catrobat.catroid.R;
 import org.catrobat.catroid.bluetooth.BTDeviceActivity;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.content.Sprite;
+import org.catrobat.catroid.content.actions.ArduinoSendAction;
 import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.drone.DroneInitializer;
 import org.catrobat.catroid.legonxt.LegoNXT;
@@ -125,7 +126,11 @@ public class PreStageActivity extends BaseActivity {
 			//startBluetoothCommunication();
 		}
 		if ((requiredResources & Brick.BLUETOOTH_ARDUINO) > 0) {
-			//Arduino Bluetooth Toast here
+			Bundle bundle = new Bundle();
+			bundle.putInt(BTDeviceActivity.RESOURCE_CONSTANT, Brick.BLUETOOTH_ARDUINO);
+			bundle.putString(BTDeviceActivity.RESOURCE_NAME_TEXT,
+					getResources().getString(R.string.select_device_arduino));
+			BTResourceQueue.add(bundle);
 		}
 
 		if ((requiredResources & Brick.ARDRONE_SUPPORT) > 0) {
@@ -270,6 +275,14 @@ public class PreStageActivity extends BaseActivity {
 								legoNXT = new LegoNXT(this, recieveHandler);
 								String address = data.getExtras().getString(BTDeviceActivity.EXTRA_DEVICE_ADDRESS);
 								legoNXT.startBTCommunicator(address);
+								break;
+							case (Brick.BLUETOOTH_ARDUINO):
+								String arduinoMacAddress = data.getExtras().getString(
+										BTDeviceActivity.EXTRA_DEVICE_ADDRESS);
+								ArduinoSendAction.initBluetoothConnection(arduinoMacAddress);
+
+								connectingProgressDialog.dismiss();
+								resourceInitialized();
 								break;
 						}
 						break;
