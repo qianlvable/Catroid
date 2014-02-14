@@ -23,6 +23,7 @@
 package org.catrobat.catroid.ui.fragment;
 
 import android.annotation.TargetApi;
+import android.os.Build;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;

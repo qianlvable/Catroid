@@ -124,7 +124,11 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 			throw new LoadingProjectException(context.getString(R.string.error_load_project));
 		} else if (project.getCatrobatLanguageVersion() > Constants.CURRENT_CATROBAT_LANGUAGE_VERSION) {
 			project = oldProject;
-			throw new OutdatedVersionProjectException(context.getString(R.string.error_outdated_pocketcode_version));
+			if (errorMessage) {
+				Utils.showErrorDialog(context, R.string.error_outdated_pocketcode_version);
+				// TODO insert update link to Google Play
+			}
+			return false;
 		} else {
 			if (project.getCatrobatLanguageVersion() == 0.8f) {
 				//TODO insert in every "When project starts" script list a "show" brick
@@ -137,7 +141,7 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 			if (project.getCatrobatLanguageVersion() == 0.91f) {
 				project.setCatrobatLanguageVersion(0.92f);
 				project.setScreenMode(ScreenModes.STRETCH);
-				checkNestingBrickReferences();
+                checkNestingBrickReferences();
 			}
 			//insert further convertions here
 

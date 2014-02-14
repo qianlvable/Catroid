@@ -163,8 +163,12 @@ public class StageListener implements ApplicationListener {
 		}
 
 		passepartout = new Passepartout(ScreenValues.SCREEN_WIDTH, ScreenValues.SCREEN_HEIGHT, maximizeViewPortWidth,
-				maximizeViewPortHeight, virtualWidth, virtualHeight);
+				maximizeViewPortHeight, virtualWidth, virtualHeight, camera.combined);
 		stage.addActor(passepartout);
+
+		if (sprites.size() > 0) {
+			sprites.get(0).look.setLookData(createWhiteBackgroundLookData());
+		}
 
 		if (DEBUG) {
 			OrthoCamController camController = new OrthoCamController(camera);
@@ -179,6 +183,9 @@ public class StageListener implements ApplicationListener {
 
 		axes = new Texture(Gdx.files.internal("stage/red_pixel.bmp"));
 		skipFirstFrameForAutomaticScreenshot = true;
+
+		Gdx.gl.glViewport(0, 0, ScreenValues.SCREEN_WIDTH, ScreenValues.SCREEN_HEIGHT);
+		initScreenMode();
 
 	}
 
@@ -246,6 +253,7 @@ public class StageListener implements ApplicationListener {
 	public void finish() {
 		finished = true;
 		SoundManager.getInstance().clear();
+
 		if (thumbnail != null && !makeAutomaticScreenshot) {
 			saveScreenshot(thumbnail, SCREENSHOT_AUTOMATIC_FILE_NAME);
 		}
@@ -461,12 +469,15 @@ public class StageListener implements ApplicationListener {
 		return copyOfTestPixels;
 	}
 
+
 	public void toggleScreenMode() {
 		switch (project.getScreenMode()) {
 			case MAXIMIZE:
+
 				project.setScreenMode(ScreenModes.STRETCH);
 				break;
 			case STRETCH:
+
 				project.setScreenMode(ScreenModes.MAXIMIZE);
 				break;
 		}
@@ -486,6 +497,7 @@ public class StageListener implements ApplicationListener {
 				screenshotHeight = ScreenValues.SCREEN_HEIGHT;
 				screenshotX = 0;
 				screenshotY = 0;
+				passepartout.setVisible(false);
 				break;
 
 			case MAXIMIZE:
@@ -494,6 +506,7 @@ public class StageListener implements ApplicationListener {
 				screenshotHeight = maximizeViewPortHeight;
 				screenshotX = maximizeViewPortX;
 				screenshotY = maximizeViewPortY;
+				passepartout.setVisible(true);
 				break;
 
 			default:
@@ -503,6 +516,7 @@ public class StageListener implements ApplicationListener {
 		camera = (OrthographicCamera) stage.getCamera();
 		camera.position.set(0, 0, 0);
 		camera.update();
+		passepartout.setCameraCombined(camera.combined);
 	}
 
 	private LookData createWhiteBackgroundLookData() {

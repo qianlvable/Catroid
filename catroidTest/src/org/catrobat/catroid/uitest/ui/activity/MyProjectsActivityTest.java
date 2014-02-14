@@ -1227,10 +1227,10 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 		solo.enterText(0, UiTestUtils.JUST_SPECIAL_CHAR_PROJECT_NAME);
 		solo.clickOnText(solo.getString(R.string.ok));
 		solo.waitForDialogToClose(500);
-
-		renameDirectory = new File(Utils.buildProjectPath(UiTestUtils.JUST_SPECIAL_CHAR_PROJECT_NAME));
-		assertTrue("Rename with just special characters was not successful", renameDirectory.isDirectory());
-		UtilFile.deleteDirectory(new File(Utils.buildProjectPath(UiTestUtils.JUST_SPECIAL_CHAR_PROJECT_NAME)));
+		String errorMessageProjectExists = solo.getString(R.string.error_project_exists);
+		assertTrue("No or wrong error message shown",
+				solo.searchText((errorMessageProjectExists)));
+		solo.clickOnButton(solo.getString(R.string.close));
 	}
 
 	public void testRenameProjectJustSpecialCharactersTwo() {
@@ -1721,10 +1721,10 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 		solo.enterText(0, UiTestUtils.JUST_SPECIAL_CHAR_PROJECT_NAME);
 		solo.clickOnText(solo.getString(R.string.ok));
 		solo.sleep(200);
-
-		assertTrue("Did not copy the selected project to just special chars",
-				UiTestUtils.searchExactText(solo, UiTestUtils.JUST_SPECIAL_CHAR_PROJECT_NAME, true));
-		UtilFile.deleteDirectory(new File(Utils.buildProjectPath(UiTestUtils.JUST_SPECIAL_CHAR_PROJECT_NAME)));
+		String errorMessageProjectExists = solo.getString(R.string.error_project_exists);
+		assertTrue("No or wrong error message shown",
+				solo.searchText((errorMessageProjectExists)));
+		solo.clickOnButton(solo.getString(R.string.close));
 	}
 
 	public void testCopyProjectJustSpecialCharactersTwo() {
