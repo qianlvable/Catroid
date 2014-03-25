@@ -28,7 +28,6 @@ import android.util.Log;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.actions.ArduinoReceiveAction;
-import org.catrobat.catroid.content.actions.ArduinoSendAction;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -294,16 +293,9 @@ public class FormulaElement implements Serializable {
 					pinNumberHigherByteDigital = left.toString().charAt(left.toString().length() - 3);
 				}
 				char pinValueDigital = 'D'; //D stands for digital
-				//send request for the pin to Arduino
-				ArduinoReceiveAction.initBluetoothConnection();
 				BluetoothSocket tmpSocketDigital = ArduinoReceiveAction.getBluetoothSocket();
-				//receive answer from Arduino
 				int pinValueFromArduinoDigital = ArduinoReceiveAction.receiveDataViaBluetoothSocket(tmpSocketDigital,
 						pinValueDigital, pinNumberLowerByteDigital, pinNumberHigherByteDigital);
-
-				//ugly quick fix
-				ArduinoSendAction.turnOffBluetooth();
-				//ugly quick fix
 
 				if (pinValueFromArduinoDigital == 72) {
 					return 1.0;
@@ -328,16 +320,9 @@ public class FormulaElement implements Serializable {
 					pinNumberHigherByteAnalog = left.toString().charAt(left.toString().length() - 3);
 				}
 				char pinValueAnalog = 'A'; //A stands for analog
-				//send request for the pin to Arduino
-				ArduinoReceiveAction.initBluetoothConnection();
 				BluetoothSocket tmpSocketAnalog = ArduinoReceiveAction.getBluetoothSocket();
-				//receive answer from Arduino
 				int pinValueFromArduinoAnalog = ArduinoReceiveAction.receiveDataViaBluetoothSocket(tmpSocketAnalog,
 						pinValueAnalog, pinNumberLowerByteAnalog, pinNumberHigherByteAnalog);
-
-				//ugly quick fix
-				//				ArduinoSendAction.turnOffBluetooth();
-				//ugly quick fix
 
 				return (double) pinValueFromArduinoAnalog;
 		}
