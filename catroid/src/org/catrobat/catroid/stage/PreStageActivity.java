@@ -293,7 +293,9 @@ public class PreStageActivity extends BaseActivity {
 										resourceFailed();
 									}
 									ArduinoSendAction.setBluetoothSocket(btConnection.getBTSocket());
-									ArduinoReceiveAction.setBluetoothSocket(btConnection.getBTSocket());
+
+									ArduinoReceiveAction.setBluetoothMacAdress(arduinoMacAddress);
+									//									ArduinoReceiveAction.setBluetoothSocket(btConnection.getBTSocket());
 								}
 								ArduinoSendAction.sendDataViaBluetoothSocket(ArduinoSendAction.getBluetoothSocket(),
 										ArduinoSendAction.getPinValue(), ArduinoSendAction.getPinNumberLowerByte(),
