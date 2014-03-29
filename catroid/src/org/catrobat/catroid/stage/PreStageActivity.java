@@ -281,8 +281,9 @@ public class PreStageActivity extends BaseActivity {
 								legoNXT.startBTCommunicator(address);
 								break;
 							case (Brick.BLUETOOTH_ARDUINO):
-								if (ArduinoSendAction.getBluetoothSocket() == null
-										|| ArduinoReceiveAction.getBluetoothSocket() == null) {
+								//								if (ArduinoSendAction.getBluetoothSocket() == null
+								//										|| ArduinoReceiveAction.getBluetoothSocket() == null) {
+								if (ArduinoSendAction.getBluetoothSocket() == null) {
 
 									String arduinoMacAddress = data.getExtras().getString(
 											BTDeviceActivity.EXTRA_DEVICE_ADDRESS);
@@ -292,14 +293,14 @@ public class PreStageActivity extends BaseActivity {
 									if (returnState != States.CONNECTED) {
 										resourceFailed();
 									}
-									ArduinoSendAction.setBluetoothSocket(btConnection.getBTSocket());
 
-									ArduinoReceiveAction.setBluetoothMacAdress(arduinoMacAddress);
-									//									ArduinoReceiveAction.setBluetoothSocket(btConnection.getBTSocket());
+									//									ArduinoSendAction.setBluetoothSocket(btConnection.getBTSocket());
+									//									ArduinoReceiveAction.setBluetoothMacAdress(arduinoMacAddress);
+									ArduinoReceiveAction.setBluetoothSocket(btConnection.getBTSocket());
 								}
-								ArduinoSendAction.sendDataViaBluetoothSocket(ArduinoSendAction.getBluetoothSocket(),
-										ArduinoSendAction.getPinValue(), ArduinoSendAction.getPinNumberLowerByte(),
-										ArduinoSendAction.getPinNumberHigherByte());
+								//								ArduinoSendAction.sendDataViaBluetoothSocket(ArduinoSendAction.getBluetoothSocket(),
+								//										ArduinoSendAction.getPinValue(), ArduinoSendAction.getPinNumberLowerByte(),
+								//										ArduinoSendAction.getPinNumberHigherByte());
 								connectingProgressDialog.dismiss();
 								resourceInitialized();
 								break;
