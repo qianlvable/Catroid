@@ -71,6 +71,9 @@ public class ChangeXByNBrick extends BrickBaseType implements OnClickListener, F
 
 	@Override
 	public int getRequiredResources() {
+		if (xMovement.containsArduinoSensors()) {
+			return BLUETOOTH_SENSORS_ARDUINO;
+		}
 		return NO_RESOURCES;
 	}
 
