@@ -26,7 +26,7 @@ import android.util.Log;
 
 public enum Functions {
 
-	ARDUINOANALOG, ARDUINODIGITAL, SIN, COS, TAN, LN, LOG, SQRT, RAND, ROUND, ABS, PI, MOD, ARCSIN, ARCCOS, ARCTAN, EXP, MAX, MIN, TRUE, FALSE;
+	SIN, COS, TAN, LN, LOG, SQRT, RAND, ROUND, ABS, PI, MOD, ARCSIN, ARCCOS, ARCTAN, EXP, MAX, MIN, TRUE, FALSE;
 
 	private static final String TAG = Functions.class.getSimpleName();
 
@@ -35,6 +35,7 @@ public enum Functions {
 			return false;
 		}
 		return true;
+
 	}
 
 	public static Functions getFunctionByValue(String value) {
