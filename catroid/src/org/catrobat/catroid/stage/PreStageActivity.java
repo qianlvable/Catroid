@@ -2,21 +2,21 @@
  *  Catroid: An on-device visual programming system for Android devices
  *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
  *  published by the Free Software Foundation, either version 3 of the
  *  License, or (at your option) any later version.
- *  
+ *
  *  An additional term exception under section 7 of the GNU Affero
  *  General Public License, version 3, is available at
  *  http://developer.catrobat.org/license_additional_term
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU Affero General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -41,7 +41,7 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.arduino.Arduino;
 import org.catrobat.catroid.arduino.ArduinoSensor;
-import org.catrobat.catroid.bluetooth.BTDeviceActivity;
+import org.catrobat.catroid.bluetooth.DeviceListActivity;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.Brick;
@@ -62,26 +62,99 @@ import java.util.Queue;
 @SuppressWarnings("deprecation")
 public class PreStageActivity extends BaseActivity {
 
-	private static final String TAG = PreStageActivity.class.getSimpleName();
-	private static final int REQUEST_ENABLE_BLUETOOTH = 2000;
 	public static final int REQUEST_RESOURCES_INIT = 101;
 	public static final int REQUEST_TEXT_TO_SPEECH = 10;
+	private static final String TAG = PreStageActivity.class.getSimpleName();
+	private static final int REQUEST_ENABLE_BLUETOOTH = 2000;
+	private static LegoNXT legoNXT;
+	//messages from Lego NXT device can be handled here
+	// TODO should be fixed - could lead to problems
+	@SuppressLint("HandlerLeak")
+	final Handler recieveHandler = new Handler() {
+		@Override
+		public void handleMessage(Message myMessage) {
 
 	private int resources = Brick.NO_RESOURCES;
-	private int requiredResourceCounter;
-
-	private static LegoNXT legoNXT;
-	private boolean autoConnect = false;
-	private ProgressDialog connectingProgressDialog;
+			Log.i("bt", "message" + myMessage.getData().getInt("message"));
+			switch (myMessage.getData().getInt("message")) {
+				case LegoNXTBtCommunicator.STATE_CONNECTED:
+					connectingProgressDialog.dismiss();
+					resourceInitialized();
+					initNextBTRessource();
+					break;
+				case LegoNXTBtCommunicator.STATE_CONNECTERROR:
+					Toast.makeText(PreStageActivity.this, R.string.bt_connection_failed, Toast.LENGTH_SHORT).show();
+					connectingProgressDialog.dismiss();
+					legoNXT.destroyCommunicator();
+					legoNXT = null;
+					resourceFailed();
+					break;
+			}
+		}
+	};
 	private static TextToSpeech textToSpeech;
 	private static OnUtteranceCompletedListenerContainer onUtteranceCompletedListenerContainer;
+	private static Arduino arduino;
+	private int requiredResourceCounter;
+	private boolean autoConnect = false;
+	private ProgressDialog connectingProgressDialog;
 	private Queue<Bundle> BTResourceQueue;
 
-	private static Arduino arduino;
+	//all resources that should be reinitialized with every stage start
+	public static void shutdownResources() {
+		if (textToSpeech != null) {
+			textToSpeech.stop();
+			textToSpeech.shutdown();
+		}
+		if (legoNXT != null) {
+			legoNXT.pauseCommunicator();
+		}
+		if (arduino != null) {
+			arduino.pauseCommunicator();
+		}
+	}
 
 	private DroneInitializer droneInitializer = null;
 
 	private Intent returnToActivityIntent = null;
+
+
+	//all resources that should not have to be reinitialized every stage start
+	public static void shutdownPersistentResources() {
+		if (legoNXT != null) {
+			legoNXT.destroyCommunicator();
+			legoNXT = null;
+		}
+		if (arduino != null) {
+			arduino.destroyCommunicator();
+			arduino = null;
+		}
+		deleteSpeechFiles();
+	}
+
+	private static void deleteSpeechFiles() {
+		File pathToSpeechFiles = new File(Constants.TEXT_TO_SPEECH_TMP_PATH);
+		if (pathToSpeechFiles.isDirectory()) {
+			for (File file : pathToSpeechFiles.listFiles()) {
+				file.delete();
+			}
+		}
+	}
+
+	public static void textToSpeech(String text, File speechFile, OnUtteranceCompletedListener listener,
+									HashMap<String, String> speakParameter) {
+		if (text == null) {
+			text = "";
+		}
+
+		if (onUtteranceCompletedListenerContainer.addOnUtteranceCompletedListener(speechFile, listener,
+				speakParameter.get(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID))) {
+			int status = textToSpeech.synthesizeToFile(text, speakParameter, speechFile.getAbsolutePath());
+			if (status == TextToSpeech.ERROR) {
+				Log.e(TAG, "File synthesizing failed");
+			}
+		}
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -123,15 +196,15 @@ public class PreStageActivity extends BaseActivity {
 				}
 			}
 			Bundle bundle = new Bundle();
-			bundle.putInt(BTDeviceActivity.RESOURCE_CONSTANT, Brick.BLUETOOTH_LEGO_NXT);
-			bundle.putString(BTDeviceActivity.RESOURCE_NAME_TEXT, getResources().getString(R.string.select_device_nxt));
+			bundle.putInt(DeviceListActivity.RESOURCE_CONSTANT, Brick.BLUETOOTH_LEGO_NXT);
+			bundle.putString(DeviceListActivity.RESOURCE_NAME_TEXT, getResources().getString(R.string.select_device_nxt));
 			BTResourceQueue.add(bundle);
 			//startBluetoothCommunication();
 		}
 		if ((requiredResources & Brick.BLUETOOTH_ARDUINO) > 0) {
 			Bundle bundle = new Bundle();
-			bundle.putInt(BTDeviceActivity.RESOURCE_CONSTANT, Brick.BLUETOOTH_ARDUINO);
-			bundle.putString(BTDeviceActivity.RESOURCE_NAME_TEXT,
+			bundle.putInt(DeviceListActivity.RESOURCE_CONSTANT, Brick.BLUETOOTH_ARDUINO);
+			bundle.putString(DeviceListActivity.RESOURCE_NAME_TEXT,
 					getResources().getString(R.string.select_device_arduino));
 			BTResourceQueue.add(bundle);
 		}
@@ -142,8 +215,8 @@ public class PreStageActivity extends BaseActivity {
 			sensor.setBooleanArduinoBricks(true);
 
 			Bundle bundle = new Bundle();
-			bundle.putInt(BTDeviceActivity.RESOURCE_CONSTANT, Brick.BLUETOOTH_SENSORS_ARDUINO);
-			bundle.putString(BTDeviceActivity.RESOURCE_NAME_TEXT,
+			bundle.putInt(DeviceListActivity.RESOURCE_CONSTANT, Brick.BLUETOOTH_SENSORS_ARDUINO);
+			bundle.putString(DeviceListActivity.RESOURCE_NAME_TEXT,
 					getResources().getString(R.string.select_device_arduino));
 			BTResourceQueue.add(bundle);
 		} else {
@@ -267,10 +340,10 @@ public class PreStageActivity extends BaseActivity {
 	private void startBluetoothCommunication(Bundle bundle) {
 		connectingProgressDialog = ProgressDialog.show(this, "",
 				getResources().getString(R.string.connecting_please_wait), true);
-		Intent serverIntent = new Intent(this, BTDeviceActivity.class);
+		Intent serverIntent = new Intent(this, DeviceListActivity.class);
 		Bundle data = new Bundle();
-		data.putInt(BTDeviceActivity.RESOURCE_CONSTANT, bundle.getInt(BTDeviceActivity.RESOURCE_CONSTANT));
-		data.putString(BTDeviceActivity.RESOURCE_NAME_TEXT, bundle.getString(BTDeviceActivity.RESOURCE_NAME_TEXT));
+		data.putInt(DeviceListActivity.RESOURCE_CONSTANT, bundle.getInt(DeviceListActivity.RESOURCE_CONSTANT));
+		data.putString(DeviceListActivity.RESOURCE_NAME_TEXT, bundle.getString(DeviceListActivity.RESOURCE_NAME_TEXT));
 		serverIntent.putExtras(data);
 		this.startActivityForResult(serverIntent, REQUEST_ENABLE_BLUETOOTH);
 	}
@@ -295,16 +368,16 @@ public class PreStageActivity extends BaseActivity {
 				switch (resultCode) {
 					case Activity.RESULT_OK:
 						Bundle bundle = data.getExtras();
-						switch (bundle.getInt(BTDeviceActivity.RESOURCE_CONSTANT)) {
+						switch (bundle.getInt(DeviceListActivity.RESOURCE_CONSTANT)) {
 							case (Brick.BLUETOOTH_LEGO_NXT):
 								legoNXT = new LegoNXT(this, recieveHandler);
-								String address = data.getExtras().getString(BTDeviceActivity.EXTRA_DEVICE_ADDRESS);
+								String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
 								legoNXT.startBTCommunicator(address);
 								break;
 							case (Brick.BLUETOOTH_ARDUINO):
 
 								String arduinoMacAddress = data.getExtras().getString(
-										BTDeviceActivity.EXTRA_DEVICE_ADDRESS);
+										DeviceListActivity.EXTRA_DEVICE_ADDRESS);
 								arduino = new Arduino(this, recieveHandler);
 								arduino.startBTCommunicator(arduinoMacAddress);
 								connectingProgressDialog.dismiss();
@@ -312,7 +385,7 @@ public class PreStageActivity extends BaseActivity {
 								break;
 							case (Brick.BLUETOOTH_SENSORS_ARDUINO):
 
-								String MacAddress = data.getExtras().getString(BTDeviceActivity.EXTRA_DEVICE_ADDRESS);
+								String MacAddress = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
 								arduino = new Arduino(this, recieveHandler);
 								arduino.startBTCommunicator(MacAddress);
 								connectingProgressDialog.dismiss();
@@ -320,7 +393,7 @@ public class PreStageActivity extends BaseActivity {
 								break;
 						}
 						break;
-					case BTDeviceActivity.BLUETOOTH_ACTIVATION_CANCELED:
+					case DeviceListActivity.BLUETOOTH_ACTIVATION_CANCELED:
 						connectingProgressDialog.dismiss();
 						resourceFailed();
 						break;
@@ -366,12 +439,12 @@ public class PreStageActivity extends BaseActivity {
 									resourceFailed();
 								}
 							}).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									dialog.cancel();
-									resourceFailed();
-								}
-							});
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+							resourceFailed();
+						}
+					});
 					AlertDialog alert = builder.create();
 					alert.show();
 				}

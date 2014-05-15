@@ -66,7 +66,7 @@ import org.catrobat.catroid.R;
 
 import java.util.Set;
 
-public class BTDeviceActivity extends Activity {
+public class DeviceListActivity extends Activity {
 
 	private static final int REQUEST_ENABLE_BT = 2000;
 
