@@ -31,6 +31,7 @@ import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.BrickValues;
 import org.catrobat.catroid.common.MessageContainer;
 import org.catrobat.catroid.content.Sprite;
+import org.catrobat.catroid.content.bricks.ArduinoSendBrick;
 import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.content.bricks.BroadcastBrick;
 import org.catrobat.catroid.content.bricks.BroadcastReceiverBrick;
@@ -103,6 +104,8 @@ public class CategoryBricksFactory {
 			return setupVariablesCategoryList(sprite);
 		} else if (category.equals(context.getString(R.string.category_lego_nxt))) {
 			return setupLegoNxtCategoryList(sprite);
+		} else if (category.equals(context.getString(R.string.category_arduino))) {
+			return setupArduinoCategoryList(sprite);
 		}
 
 		return new ArrayList<Brick>();
@@ -213,6 +216,12 @@ public class CategoryBricksFactory {
 		legoNXTBrickList.add(new LegoNxtPlayToneBrick(sprite, BrickValues.LEGO_FREQUENCY, BrickValues.LEGO_DURATION));
 
 		return legoNXTBrickList;
+	}
+
+	private List<Brick> setupArduinoCategoryList(Sprite sprite) {
+		List<Brick> arduinoBrickList = new ArrayList<Brick>();
+		arduinoBrickList.add(new ArduinoSendBrick(sprite));
+		return arduinoBrickList;
 	}
 
 	private boolean isBackground(Sprite sprite) {

@@ -28,10 +28,17 @@
             android:key="setting_mindstorm_bricks"
             android:summary="@string/preference_description_mindstorm_bricks"
             android:title="@string/preference_title_enable_mindstorm_bricks" />
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="setting_nfc_bricks"
             android:summary="@string/preference_description_nfc_bricks"
             android:title="@string/preference_title_enable_nfc_bricks" />
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="setting_arduino_bricks"
+            android:summary="@string/preference_description_arduino_bricks"
+            android:title="@string/preference_title_enable_arduino_bricks" />
 
 </PreferenceScreen>

@@ -266,6 +266,7 @@ public class InternFormulaParser {
 
 		FormulaElement sensorTree = new FormulaElement(FormulaElement.ElementType.SENSOR,
 				currentToken.getTokenStringValue(), null);
+
 		getNextToken();
 		return sensorTree;
 	}
@@ -291,6 +292,40 @@ public class InternFormulaParser {
 				throw new InternFormulaParserException("Parse Error");
 			}
 			getNextToken();
+		}
+		if (functionTree.getValue().equals(Sensors.ARDUINODIGITAL.name())) {
+			if ((functionTree.getLeftChild().getValue().charAt(0) > '1')
+					|| (functionTree.getLeftChild().getValue().length() > 2)
+					|| (functionTree.getLeftChild().getValue().length() < 2)) {
+				throw new InternFormulaParserException("Parse Error");
+			}
+			if ((functionTree.getLeftChild().getValue().charAt(0) == '0')
+					&& (functionTree.getLeftChild().getValue().charAt(1) == '0')) {
+				throw new InternFormulaParserException("Parse Error");
+			}
+			if ((functionTree.getLeftChild().getValue().charAt(0) == '0')
+					&& (functionTree.getLeftChild().getValue().charAt(1) == '2')) {
+				throw new InternFormulaParserException("Parse Error");
+			}
+			if ((functionTree.getLeftChild().getValue().charAt(0) == '0')
+					&& (functionTree.getLeftChild().getValue().charAt(1) == '7')) {
+				throw new InternFormulaParserException("Parse Error");
+			}
+			if ((functionTree.getLeftChild().getValue().charAt(0) == '1')
+					&& (functionTree.getLeftChild().getValue().charAt(1) > '3')) {
+				throw new InternFormulaParserException("Parse Error");
+			}
+		}
+		if (functionTree.getValue().equals(Sensors.ARDUINOANALOG.name())) {
+			if ((functionTree.getLeftChild().getValue().charAt(0) > '0')
+					|| (functionTree.getLeftChild().getValue().length() > 2)
+					|| (functionTree.getLeftChild().getValue().length() < 2)) {
+				throw new InternFormulaParserException("Parse Error");
+			}
+			if ((functionTree.getLeftChild().getValue().charAt(0) == '0')
+					&& (functionTree.getLeftChild().getValue().charAt(1) > '5')) {
+				throw new InternFormulaParserException("Parse Error");
+			}
 		}
 		return functionTree;
 	}

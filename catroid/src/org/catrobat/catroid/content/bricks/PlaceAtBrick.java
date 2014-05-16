@@ -82,6 +82,9 @@ public class PlaceAtBrick extends BrickBaseType implements OnClickListener, Form
 
 	@Override
 	public int getRequiredResources() {
+		if (xPosition.containsArduinoSensors() || yPosition.containsArduinoSensors()) {
+			return BLUETOOTH_SENSORS_ARDUINO;
+		}
 		return NO_RESOURCES;
 	}
 

@@ -143,7 +143,7 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 			if (project.getCatrobatLanguageVersion() == 0.91f) {
 				project.setCatrobatLanguageVersion(0.92f);
 				project.setScreenMode(ScreenModes.STRETCH);
-                checkNestingBrickReferences();
+				checkNestingBrickReferences();
 			}
 			//insert further convertions here
 
@@ -171,14 +171,6 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 		currentSprite = null;
 		currentScript = null;
 		Utils.saveToPreferences(context, Constants.PREF_PROJECTNAME_KEY, project.getName());
-	}
-
-	public boolean cancelLoadProject() {
-		return StorageHandler.getInstance().cancelLoadProject();
-	}
-
-	public boolean canLoadProject(String projectName) {
-		return StorageHandler.getInstance().loadProject(projectName) != null;
 	}
 
 	public void saveProject() {
@@ -370,11 +362,6 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 
 	@Override
 	public void onLoadProjectSuccess(boolean startProjectActivity) {
-
-	}
-
-	@Override
-	public void onLoadProjectFailure() {
 
 	}
 

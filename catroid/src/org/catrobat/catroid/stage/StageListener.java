@@ -179,9 +179,9 @@ public class StageListener implements ApplicationListener {
 
 		axes = new Texture(Gdx.files.internal("stage/red_pixel.bmp"));
 		skipFirstFrameForAutomaticScreenshot = true;
-		if (checkIfAutomaticScreenshotShouldBeTaken) {
-			makeAutomaticScreenshot = project.manualScreenshotExists(SCREENSHOT_MANUAL_FILE_NAME);
-		}
+
+		Gdx.gl.glViewport(0, 0, ScreenValues.SCREEN_WIDTH, ScreenValues.SCREEN_HEIGHT);
+		initScreenMode();
 
 	}
 
@@ -235,6 +235,22 @@ public class StageListener implements ApplicationListener {
 
 	@Override
 	public void pause() {
+
+		//		try {
+		//			ArduinoSensor sensor = ArduinoSensor.getArduinoSensorInstance();
+		//			boolean arduinoUsed = sensor.getBooleanArduinoBricksUsed();
+		//			if (arduinoUsed) {
+		//				Handler btcHandler = Arduino.getBTCHandler();
+		//				Log.d("StageListener Pause", "sendArduinoPauseMessage()");
+		//				Message myMessage = btcHandler.obtainMessage();
+		//				myMessage.what = ArduinoCommunicator.PAUSED_MESSAGE;
+		//				btcHandler.sendMessage(myMessage);
+		//				Log.d("StageListener Pause", "Paused State not implemented yet!");
+		//			}
+		//
+		//		} catch (Exception e) {
+		//		}
+
 		if (finished) {
 			return;
 		}

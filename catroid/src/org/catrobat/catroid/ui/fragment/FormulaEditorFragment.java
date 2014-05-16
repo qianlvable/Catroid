@@ -105,6 +105,14 @@ public class FormulaEditorFragment extends SherlockFragment implements OnKeyList
 		setUpActionBar();
 		currentBrick = (Brick) getArguments().getSerializable(BRICK_BUNDLE_ARGUMENT);
 		currentFormula = (Formula) getArguments().getSerializable(FORMULA_BUNDLE_ARGUMENT);
+
+		if (currentFormula.containsArduinoSensors()) {
+			ProjectManager.getInstance().getCurrentProject().setIsArduinoProject(true);
+			//			ProjectManager.getInstance().getCurrentProject().setIsLegoProject(false);
+		} else {
+			ProjectManager.getInstance().getCurrentProject().setIsArduinoProject(false);
+			//			ProjectManager.getInstance().getCurrentProject().setIsLegoProject(false);
+		}
 	}
 
 	private void setUpActionBar() {
@@ -487,15 +495,14 @@ public class FormulaEditorFragment extends SherlockFragment implements OnKeyList
 		FragmentManager fragmentManager = ((SherlockFragmentActivity) context).getSupportFragmentManager();
 		Fragment fragment = fragmentManager.findFragmentByTag(tag);
 
-		if (fragment == null) {
-			fragment = new FormulaEditorListFragment();
-			Bundle bundle = new Bundle();
-			bundle.putString(FormulaEditorListFragment.ACTION_BAR_TITLE_BUNDLE_ARGUMENT,
-					context.getString(actionbarResId));
-			bundle.putString(FormulaEditorListFragment.FRAGMENT_TAG_BUNDLE_ARGUMENT, tag);
-			fragment.setArguments(bundle);
-			fragmentManager.beginTransaction().add(R.id.script_fragment_container, fragment, tag).commit();
-		}
+		//		if (fragment == null) {
+		fragment = new FormulaEditorListFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString(FormulaEditorListFragment.ACTION_BAR_TITLE_BUNDLE_ARGUMENT, context.getString(actionbarResId));
+		bundle.putString(FormulaEditorListFragment.FRAGMENT_TAG_BUNDLE_ARGUMENT, tag);
+		fragment.setArguments(bundle);
+		fragmentManager.beginTransaction().add(R.id.script_fragment_container, fragment, tag).commit();
+		//		}
 		((FormulaEditorListFragment) fragment).showFragment(context);
 	}
 
