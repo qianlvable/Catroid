@@ -350,12 +350,17 @@ public class ExtendedActions extends Actions {
 		return action;
 	}
 
-	public static ArduinoSendAction sendArduinoVar(Sprite sprite, char pinNumberLowerByte, char pinNumberHigherByte,
-			char pinValue) {
+	//	public static ArduinoSendAction sendArduinoVar(Sprite sprite, char pinNumberLowerByte, char pinNumberHigherByte,
+	//			char pinValue) {
+	//		ArduinoSendAction action = action(ArduinoSendAction.class);
+	//				action.sendDataViaBluetoothSocket(ArduinoSendAction.getBluetoothSocket(), pinValue, pinNumberLowerByte,
+	//						pinNumberHigherByte);
+	//		return action;
+	//	}
+
+	public static ArduinoSendAction sendArduinoVar(Sprite sprite) {
 		ArduinoSendAction action = action(ArduinoSendAction.class);
-		action.setPinNumberLowerByte(pinNumberLowerByte);
-		action.setPinNumberHigherByte(pinNumberHigherByte);
-		action.setPinValue(pinValue);
+		//			action.setSprite(sprite);
 		return action;
 	}
 
