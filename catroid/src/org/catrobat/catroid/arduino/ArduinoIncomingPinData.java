@@ -22,14 +22,10 @@
  */
 package org.catrobat.catroid.arduino;
 
-/**
- * Adrian Schnedlitz *
- */
+
 public final class ArduinoIncomingPinData {
 
 	private static ArduinoIncomingPinData instance = null;
-
-	//	private static Semaphore receiveSyncSemaphore = new Semaphore(1);
 
 	//Sensor variables
 	private int arduinoDigitalSensor = 0; //0 or 1 (Low or High)

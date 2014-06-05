@@ -63,6 +63,17 @@ public final class SensorHandler implements SensorEventListener, SensorCustomEve
 		instance.sensorManager.registerListener(instance, instance.rotationVectorSensor,
 				android.hardware.SensorManager.SENSOR_DELAY_NORMAL);
 		instance.sensorManager.registerListener(instance, Sensors.LOUDNESS);
+
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		ArduinoSensor sensor = ArduinoSensor.getArduinoSensorInstance();
+		if ((sharedPreferences.getBoolean(ArduinoSensor.KEY_SETTINGS_ARDUINO_BRICKS, false))) {
+			instance.sensorManager.registerListener(instance, Sensors.ARDUINODIGITAL);
+			instance.sensorManager.registerListener(instance, Sensors.ARDUINOANALOG);
+		} else if (sensor.getAreArduinoBricksUsed()) {
+			instance.sensorManager.registerListener(instance, Sensors.ARDUINODIGITAL);
+			instance.sensorManager.registerListener(instance, Sensors.ARDUINOANALOG);
+		}
+
 	}
 
 	public static void registerListener(SensorEventListener listener) {
