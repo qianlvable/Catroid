@@ -250,6 +250,10 @@ public class FormulaEditorFragment extends SherlockFragment implements OnKeyList
 
 					switch (view.getId()) {
 						case R.id.formula_editor_keyboard_compute:
+							//can I check this here?
+							if (currentFormula.containsArduinoSensors()) {
+								return false;
+							}
 							InternFormulaParser internFormulaParser = formulaEditorEditText.getFormulaParser();
 							FormulaElement formulaElement = internFormulaParser.parseFormula();
 							if (formulaElement == null) {
