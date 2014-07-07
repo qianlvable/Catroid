@@ -2,21 +2,21 @@
  *  Catroid: An on-device visual programming system for Android devices
  *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
  *  published by the Free Software Foundation, either version 3 of the
  *  License, or (at your option) any later version.
- *  
+ *
  *  An additional term exception under section 7 of the GNU Affero
  *  General Public License, version 3, is available at
  *  http://developer.catrobat.org/license_additional_term
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU Affero General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,6 +39,7 @@ import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.WaitBrick;
+import org.catrobat.catroid.exceptions.ProjectException;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.ui.MainMenuActivity;
 import org.catrobat.catroid.ui.ProgramMenuActivity;
@@ -53,6 +54,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProjectUpAndDownloadTest extends BaseActivityInstrumentationTestCase<MainMenuActivity> {
 	private static final String TEST_FILE_DOWNLOAD_URL = ServerCalls.BASE_URL_TEST_HTTP + "catroid/download/";
@@ -61,6 +63,7 @@ public class ProjectUpAndDownloadTest extends BaseActivityInstrumentationTestCas
 	private final String newTestProject = UiTestUtils.PROJECTNAME2;
 	private final String testDescription = UiTestUtils.PROJECTDESCRIPTION1;
 	private final String newTestDescription = UiTestUtils.PROJECTDESCRIPTION2;
+	private final String offensiveLanguageDescription = UiTestUtils.PROJECTNAMEOFFENSIVELANGUAGE;
 	private String saveToken;
 	private String uploadDialogTitle;
 	private int serverProjectId;
@@ -161,6 +164,45 @@ public class ProjectUpAndDownloadTest extends BaseActivityInstrumentationTestCas
 		UiTestUtils.clearAllUtilTestProjects();
 	}
 
+	public void testUploadProjectOffensiveLanguageUsed() throws Throwable {
+		setServerURLToTestUrl();
+
+		UiTestUtils.createTestProject(testProject);
+		solo.waitForFragmentById(R.id.fragment_sprites_list);
+		solo.sleep(1000);
+		UiTestUtils.clickOnHomeActionBarButton(solo);
+		solo.waitForActivity(MainMenuActivity.class.getSimpleName());
+
+		UiTestUtils.createValidUser(getActivity());
+		Project testProject = ProjectManager.getInstance().getCurrentProject();
+		StorageHandler.getInstance().saveProject(testProject);
+
+		solo.clickOnText(solo.getString(R.string.main_menu_upload));
+		solo.waitForText(uploadDialogTitle);
+
+		// enter a new title
+		solo.clearEditText(0);
+		solo.enterText(0, offensiveLanguageDescription);
+
+		// enter a description
+		solo.clearEditText(1);
+		solo.enterText(1, newTestDescription);
+
+		solo.clickOnButton(solo.getString(R.string.upload_button));
+
+		boolean uploadErrorOccurred = solo.waitForText(solo.getString(R.string.error_project_upload));
+
+		int statusCode = 0;
+		int statusCodeOffensiveLanguage = 511;
+		statusCode = (Integer) Reflection.getPrivateField(ServerCalls.getInstance(), "uploadStatusCode");
+		Log.v("statusCode=", "" + statusCode);
+
+		assertTrue("Upload did work, but error toastmessage should have been displayed", uploadErrorOccurred);
+		assertEquals("Wrong status code from Web should be 511 for offensive language", statusCodeOffensiveLanguage,
+				statusCode);
+		UiTestUtils.clearAllUtilTestProjects();
+	}
+
 	public void testRenameProjectNameAndDescriptionWhenUploading() throws Throwable {
 		setServerURLToTestUrl();
 
@@ -253,7 +295,13 @@ public class ProjectUpAndDownloadTest extends BaseActivityInstrumentationTestCas
 
 		uploadProjectFromMainMenu(testProject, "");
 
-		ProjectManager.getInstance().loadProject(testProject, getActivity(), false);
+		try {
+			ProjectManager.getInstance().loadProject(testProject, getActivity());
+			assertTrue("Load project worked correctly", true);
+		} catch (ProjectException projectException) {
+			fail("Project is not loaded successfully");
+		}
+
 		Project uploadProject = StorageHandler.getInstance().loadProject(testProject);
 		assertEquals("Deserialized project name was changed", testProject, uploadProject.getName());
 
@@ -305,7 +353,7 @@ public class ProjectUpAndDownloadTest extends BaseActivityInstrumentationTestCas
 	}
 
 	public void testUploadStandardProject() throws Throwable {
-		createAndSaveStandardProject();
+		deleteOldAndCreateAndSaveCleanStandardProject();
 
 		setServerURLToTestUrl();
 		UiTestUtils.createValidUser(getActivity());
@@ -340,7 +388,7 @@ public class ProjectUpAndDownloadTest extends BaseActivityInstrumentationTestCas
 	}
 
 	public void testUploadModifiedStandardProject() throws Throwable {
-		createAndSaveStandardProject();
+		deleteOldAndCreateAndSaveCleanStandardProject();
 
 		setServerURLToTestUrl();
 		UiTestUtils.createValidUser(getActivity());
@@ -365,7 +413,7 @@ public class ProjectUpAndDownloadTest extends BaseActivityInstrumentationTestCas
 		solo.clickOnButton(solo.getString(R.string.main_menu_upload));
 		String uploadButtonText = solo.getString(R.string.upload_button);
 		solo.waitForText(uploadButtonText);
-		solo.goBack();
+		solo.hideSoftKeyboard();
 		solo.waitForText(uploadButtonText);
 		solo.clearEditText(0);
 		solo.enterText(0, testProject);
@@ -375,19 +423,77 @@ public class ProjectUpAndDownloadTest extends BaseActivityInstrumentationTestCas
 				solo.waitForText(solo.getString(R.string.notification_upload_finished), 0, 10000));
 	}
 
-	private void createAndSaveStandardProject() {
+	public void testDownloadProjectAfterModification() throws Throwable {
+		setServerURLToTestUrl();
+
+		String projectName = UiTestUtils.DEFAULT_TEST_PROJECT_NAME;
+		UiTestUtils.createTestProject();
+
+		int numberOfMediaFilesToExtentDownloadTime = 5;
+		String soundName = "testSound";
+
+		ArrayList<SoundInfo> soundInfoList = ProjectManager.getInstance().getCurrentSprite().getSoundList();
+		for (int number = 0; number < numberOfMediaFilesToExtentDownloadTime; number++) {
+			File soundFile = UiTestUtils.saveFileToProject(projectName,
+					"longsound" + Integer.toString(number) + ".mp3", LONG_TEST_SOUND,
+					getInstrumentation().getContext(), UiTestUtils.FileTypes.SOUND);
+			SoundInfo soundInfo = new SoundInfo();
+			soundInfo.setSoundFileName(soundFile.getName());
+			soundInfo.setTitle(soundName + Integer.toString(number));
+			soundInfoList.add(soundInfo);
+			ProjectManager.getInstance().getFileChecksumContainer()
+					.addChecksum(soundInfo.getChecksum(), soundInfo.getAbsolutePath());
+		}
+		StorageHandler.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+		Project newProject = StorageHandler.getInstance().loadProject(projectName);
+		ProjectManager.getInstance().setProject(newProject);
+
+		UiTestUtils.createValidUser(getActivity());
+		uploadProjectFromMainMenu(projectName, "");
+
+		Project uploadProject = StorageHandler.getInstance().loadProject(projectName);
+		String deserializedProjectName = uploadProject.getName();
+		assertTrue("Project was successfully uploaded", deserializedProjectName.equalsIgnoreCase(projectName));
+
+		List<Sprite> spriteList = uploadProject.getSpriteList();
+
+		UiTestUtils.clearAllUtilTestProjects();
+
+		solo.sleep(500);
+
+		soundInfoList.remove(0);
+
+		int numberOfSounds = soundInfoList.size();
+		assertEquals("Number of sounds has not changed after deletion", numberOfMediaFilesToExtentDownloadTime - 1,
+				numberOfSounds);
+
+		downloadProjectAndReplace(projectName);
+		Project downloadedProject = StorageHandler.getInstance().loadProject(projectName);
+		String serverProjectName = downloadedProject.getName();
+		assertTrue("Project was successfully downloaded", serverProjectName.equalsIgnoreCase(projectName));
+
+		List<Sprite> downloadedProjectSpriteList = downloadedProject.getSpriteList();
+
+		assertEquals("Program wasn't replaced", spriteList.size(), downloadedProjectSpriteList.size());
+	}
+
+	private void deleteOldAndCreateAndSaveCleanStandardProject() {
 		String standardProjectName = getActivity().getString(R.string.default_project_name);
 		try {
-			ProjectManager.getInstance().loadProject(standardProjectName, getActivity(), false);
-			ProjectManager.getInstance().deleteCurrentProject();
+			if (StorageHandler.getInstance().projectExists(standardProjectName)) {
+				ProjectManager.getInstance().loadProject(standardProjectName, getActivity());
+				ProjectManager.getInstance().deleteCurrentProject();
+			}
 			standardProject = StandardProjectHandler.createAndSaveStandardProject(standardProjectName,
 					getInstrumentation().getTargetContext());
-		} catch (IOException e) {
-			e.printStackTrace();
+			ProjectManager.getInstance().setProject(standardProject);
+		} catch (ProjectException projectException) {
+
+			projectException.printStackTrace();
+			fail("Cannot load old standard project");
+		} catch (IOException exception) {
 			fail("Standard project not created");
 		}
-		ProjectManager.getInstance().setProject(standardProject);
-		StorageHandler.getInstance().saveProject(standardProject);
 	}
 
 	private void uploadProjectFromMainMenu(String uploadProjectName, String uploadProjectDescription) {
@@ -496,7 +602,8 @@ public class ProjectUpAndDownloadTest extends BaseActivityInstrumentationTestCas
 		Intent intent = new Intent(getActivity(), MainMenuActivity.class);
 		intent.setAction(Intent.ACTION_VIEW);
 		intent.setData(Uri.parse(downloadUrl));
-        launchActivityWithIntent(getInstrumentation().getTargetContext().getPackageName(), MainMenuActivity.class, intent);
+		launchActivityWithIntent(getInstrumentation().getTargetContext().getPackageName(), MainMenuActivity.class,
+				intent);
 		solo.sleep(500);
 		assertTrue("OverwriteRenameDialog not shown.", solo.searchText(solo.getString(R.string.overwrite_text)));
 
@@ -519,6 +626,10 @@ public class ProjectUpAndDownloadTest extends BaseActivityInstrumentationTestCas
 		boolean waitResult = solo.waitForActivity("MainMenuActivity", 10000);
 		assertTrue("Download takes too long.", waitResult);
 		assertTrue("Download not successful.", solo.searchText(solo.getString(R.string.notification_download_finished)));
+
+		Project loadProject = StorageHandler.getInstance().loadProject(projectName);
+		ProjectManager.getInstance().setProject(loadProject);
+
 		assertEquals("Testproject not loaded.", projectName, ProjectManager.getInstance().getCurrentProject().getName());
 
 		String projectPath = Constants.DEFAULT_ROOT + "/" + projectName;
