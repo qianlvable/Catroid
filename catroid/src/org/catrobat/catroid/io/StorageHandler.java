@@ -144,6 +144,7 @@ public final class StorageHandler {
 	private XStream xstream;
 
 	private File backPackSoundDirectory;
+	private FileInputStream fileInputStream;
 
 	private Lock loadSaveLock = new ReentrantLock();
 
@@ -283,11 +284,19 @@ public final class StorageHandler {
 		loadSaveLock.lock();
 		try {
 			File projectCodeFile = new File(buildProjectPath(projectName), PROJECTCODE_NAME);
+			fileInputStream = new FileInputStream(projectCodeFile);
 			return (Project) xstream.fromXML(new FileInputStream(projectCodeFile));
 		} catch (Exception exception) {
 			Log.e(TAG, "Loading project " + projectName + " failed.", exception);
 			return null;
 		} finally {
+			if (fileInputStream != null) {
+				try {
+					fileInputStream.close();
+				} catch (IOException ioException) {
+					Log.e(TAG, "can't close fileStream.", ioException);
+				}
+			}
 			loadSaveLock.unlock();
 		}
 	}

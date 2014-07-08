@@ -22,6 +22,9 @@
  */
 package org.catrobat.catroid.stage;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
@@ -45,6 +48,7 @@ public class Passepartout extends Actor {
 
 		float scale = virtualScreenHeight / screenHeight;
 		passepartoutHeight = ((screenHeight - screenViewPortHeight) * scale);
+		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 
 		scale = virtualScreenWidth / screenWidth;
 		passepartoutWidth = ((screenWidth - screenViewPortWidth) * scale);

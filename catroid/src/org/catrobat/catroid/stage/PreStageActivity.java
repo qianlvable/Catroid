@@ -62,6 +62,9 @@ import java.util.Queue;
 @SuppressWarnings("deprecation")
 public class PreStageActivity extends BaseActivity {
 
+	private static final String TAG = PreStageActivity.class.getSimpleName();
+	private static final int REQUEST_ENABLE_BLUETOOTH = 2000;
+	private static final int REQUEST_CONNECT_DEVICE = 1000;
 	public static final int REQUEST_RESOURCES_INIT = 101;
 	public static final int REQUEST_TEXT_TO_SPEECH = 10;
 	private static final String TAG = PreStageActivity.class.getSimpleName();
@@ -96,9 +99,12 @@ public class PreStageActivity extends BaseActivity {
 	private static OnUtteranceCompletedListenerContainer onUtteranceCompletedListenerContainer;
 	private static Arduino arduino;
 	private int requiredResourceCounter;
+
+	private static LegoNXT legoNXT;
 	private boolean autoConnect = false;
 	private ProgressDialog connectingProgressDialog;
 	private Queue<Bundle> BTResourceQueue;
+	private static OnUtteranceCompletedListenerContainer onUtteranceCompletedListenerContainer;
 
 	//all resources that should be reinitialized with every stage start
 	public static void shutdownResources() {
@@ -378,10 +384,24 @@ public class PreStageActivity extends BaseActivity {
 						}
 						break;
 					case DeviceListActivity.BLUETOOTH_ACTIVATION_CANCELED:
+						Toast.makeText(PreStageActivity.this, R.string.notification_blueth_err, Toast.LENGTH_LONG)
 						connectingProgressDialog.dismiss();
 						resourceFailed();
 						break;
+				}
+				break;
+
+			case REQUEST_CONNECT_DEVICE:
+				switch (resultCode) {
+					case Activity.RESULT_OK:
+						legoNXT = new LegoNXT(this, recieveHandler);
+						String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+						autoConnect = data.getExtras().getBoolean(DeviceListActivity.AUTO_CONNECT);
+						legoNXT.startBTCommunicator(address);
+						break;
+
 					case Activity.RESULT_CANCELED:
+						connectingProgressDialog.dismiss();
 						Toast.makeText(PreStageActivity.this, R.string.bt_connection_failed, Toast.LENGTH_LONG).show();
 						connectingProgressDialog.dismiss();
 						resourceFailed();
@@ -473,7 +493,11 @@ public class PreStageActivity extends BaseActivity {
 					connectingProgressDialog.dismiss();
 					legoNXT.destroyCommunicator();
 					legoNXT = null;
+					if (autoConnect) {
+						startBluetoothCommunication(false);
+					} else {
 					resourceFailed();
+					}
 					break;
 				default:
 					return;

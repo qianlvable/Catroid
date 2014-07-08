@@ -24,6 +24,9 @@ package org.catrobat.catroid.io;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -47,6 +50,7 @@ public class LoadProjectTask extends AsyncTask<Void, Void, Boolean> {
 	private ProgressDialog progressDialog;
 	private boolean showErrorMessage;
 	private boolean startProjectActivity;
+	private LinearLayout linearLayoutProgressCircle;
 
 	private OnLoadProjectCompleteListener onLoadProjectCompleteListener;
 
@@ -103,7 +107,20 @@ public class LoadProjectTask extends AsyncTask<Void, Void, Boolean> {
 		}
 		if (onLoadProjectCompleteListener != null) {
 			if (!success && showErrorMessage) {
-				Utils.showErrorDialog(activity, R.string.error_load_project);
+				linearLayoutProgressCircle.setVisibility(View.GONE);
+
+				Builder builder = new CustomAlertDialogBuilder(activity);
+				builder.setTitle(R.string.error);
+				builder.setMessage(R.string.error_load_project);
+				builder.setNeutralButton(R.string.close, new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						onLoadProjectCompleteListener.onLoadProjectFailure();
+					}
+				});
+				Dialog errorDialog = builder.create();
+				errorDialog.show();
+
 			} else {
 				onLoadProjectCompleteListener.onLoadProjectSuccess(startProjectActivity);
 			}
@@ -114,5 +131,8 @@ public class LoadProjectTask extends AsyncTask<Void, Void, Boolean> {
 
 		void onLoadProjectSuccess(boolean startProjectActivity);
 
+		void onLoadProjectFailure();
+
 	}
+
 }
