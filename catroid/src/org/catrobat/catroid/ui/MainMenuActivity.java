@@ -114,6 +114,8 @@ public class MainMenuActivity extends BaseActivity implements OnLoadProjectCompl
 			return;
 		}
 
+		findViewById(R.id.progress_circle).setVisibility(View.GONE);
+
 		UtilFile.createStandardProjectIfRootDirectoryIsEmpty(this);
 
 		PreStageActivity.shutdownPersistentResources();
@@ -182,7 +184,9 @@ public class MainMenuActivity extends BaseActivity implements OnLoadProjectCompl
 	}
 
 	public void handleContinueButton() {
-		loadProjectInBackground(Utils.getCurrentProjectName(this));
+		Intent intent = new Intent(this, ProjectActivity.class);
+		intent.putExtra(Constants.PROJECTNAME_TO_LOAD, Utils.getCurrentProjectName(this));
+		startActivity(intent);
 	}
 
 	private void loadProjectInBackground(String projectName) {
@@ -211,6 +215,7 @@ public class MainMenuActivity extends BaseActivity implements OnLoadProjectCompl
 	}
 
 	public void handleProgramsButton(View view) {
+		findViewById(R.id.progress_circle).setVisibility(View.VISIBLE);
 		if (!viewSwitchLock.tryLock()) {
 			return;
 		}
@@ -325,5 +330,10 @@ public class MainMenuActivity extends BaseActivity implements OnLoadProjectCompl
 				spannableStringBuilder.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
 		mainMenuButtonContinue.setText(spannableStringBuilder);
+	}
+
+	@Override
+	public void onLoadProjectFailure() {
+
 	}
 }

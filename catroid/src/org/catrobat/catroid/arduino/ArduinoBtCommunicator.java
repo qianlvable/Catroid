@@ -116,7 +116,7 @@ public class ArduinoBtCommunicator extends ArduinoCommunicator {
 			} catch (IOException e) {
 				if (myOwner.isPairing()) {
 					if (uiHandler != null) {
-						sendToast(resources.getString(R.string.pairing_message));
+						//sendToast(resources.getString(R.string.pairing_message));
 						sendState(STATE_CONNECTERROR_PAIRING);
 					} else {
 						throw e;
@@ -127,7 +127,7 @@ public class ArduinoBtCommunicator extends ArduinoCommunicator {
 				//try another method for connection, this should work on the HTC desire, credits to Michael Biermann
 				try {
 					Method mMethod = btDevice.getClass().getMethod("createRfcommSocket", new Class[] { int.class });
-					btSocketTemporary = (BluetoothSocket) mMethod.invoke(btDevice, Integer.valueOf(1));
+					//btSocketTemporary = (BluetoothSocket) mMethod.invoke(btDevice, Integer.valueOf(1));
 					btSocketTemporary.connect();
 				} catch (Exception e1) {
 					if (uiHandler == null) {
@@ -147,7 +147,7 @@ public class ArduinoBtCommunicator extends ArduinoCommunicator {
 				throw e;
 			} else {
 				if (myOwner.isPairing()) {
-					sendToast(resources.getString(R.string.pairing_message));
+					//sendToast(resources.getString(R.string.pairing_message));
 				}
 				sendState(STATE_CONNECTERROR);
 				return;

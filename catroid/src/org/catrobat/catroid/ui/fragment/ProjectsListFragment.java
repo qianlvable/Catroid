@@ -2,21 +2,21 @@
  *  Catroid: An on-device visual programming system for Android devices
  *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
  *  published by the Free Software Foundation, either version 3 of the
  *  License, or (at your option) any later version.
- *  
+ *
  *  An additional term exception under section 7 of the GNU Affero
  *  General Public License, version 3, is available at
  *  http://developer.catrobat.org/license_additional_term
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU Affero General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -54,8 +54,6 @@ import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.ProjectData;
 import org.catrobat.catroid.content.Project;
-import org.catrobat.catroid.io.LoadProjectTask;
-import org.catrobat.catroid.io.LoadProjectTask.OnLoadProjectCompleteListener;
 import org.catrobat.catroid.exceptions.CompatibilityProjectException;
 import org.catrobat.catroid.exceptions.LoadingProjectException;
 import org.catrobat.catroid.exceptions.OutdatedVersionProjectException;
@@ -84,7 +82,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ProjectsListFragment extends SherlockListFragment implements OnProjectRenameListener,
-		OnUpdateProjectDescriptionListener, OnCopyProjectListener, OnProjectEditListener, OnLoadProjectCompleteListener {
+		OnUpdateProjectDescriptionListener, OnCopyProjectListener, OnProjectEditListener {
 
 	private static final String TAG = ProjectsListFragment.class.getSimpleName();
 	private static final String BUNDLE_ARGUMENTS_PROJECT_DATA = "project_data";
@@ -153,7 +151,7 @@ public class ProjectsListFragment extends SherlockListFragment implements OnProj
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_projects_list, null);
+		View rootView = inflater.inflate(R.layout.fragment_projects_list, container);
 		return rootView;
 	}
 
@@ -234,14 +232,6 @@ public class ProjectsListFragment extends SherlockListFragment implements OnProj
 
 	private void initClickListener() {
 		adapter.setOnProjectEditListener(this);
-	}
-
-	@Override
-	public void onLoadProjectSuccess(boolean startProjectActivity) {
-		if (startProjectActivity) {
-			Intent intent = new Intent(getActivity(), ProjectActivity.class);
-			getActivity().startActivity(intent);
-		}
 	}
 
 	@Override
@@ -343,10 +333,9 @@ public class ProjectsListFragment extends SherlockListFragment implements OnProj
 
 	@Override
 	public void onProjectEdit(int position) {
-		LoadProjectTask loadProjectTask = new LoadProjectTask(getActivity(), (adapter.getItem(position)).projectName,
-				true, true);
-		loadProjectTask.setOnLoadProjectCompleteListener(parentFragment);
-		loadProjectTask.execute();
+		Intent intent = new Intent(getActivity(), ProjectActivity.class);
+		intent.putExtra(Constants.PROJECTNAME_TO_LOAD, (adapter.getItem(position)).projectName);
+		getActivity().startActivity(intent);
 	}
 
 	public void startRenameActionMode() {

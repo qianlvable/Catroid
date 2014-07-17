@@ -124,11 +124,7 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 			throw new LoadingProjectException(context.getString(R.string.error_load_project));
 		} else if (project.getCatrobatLanguageVersion() > Constants.CURRENT_CATROBAT_LANGUAGE_VERSION) {
 			project = oldProject;
-			if (errorMessage) {
-				Utils.showErrorDialog(context, R.string.error_outdated_pocketcode_version);
-				// TODO insert update link to Google Play
-			}
-			return false;
+			throw new OutdatedVersionProjectException(context.getString(R.string.error_outdated_pocketcode_version));
 		} else {
 			if (project.getCatrobatLanguageVersion() == 0.8f) {
 				//TODO insert in every "When project starts" script list a "show" brick
@@ -167,6 +163,14 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 		currentSprite = null;
 		currentScript = null;
 		Utils.saveToPreferences(context, Constants.PREF_PROJECTNAME_KEY, project.getName());
+	}
+
+	public boolean cancelLoadProject() {
+		return StorageHandler.getInstance().cancelLoadProject();
+	}
+
+	public boolean canLoadProject(String projectName) {
+		return StorageHandler.getInstance().loadProject(projectName) != null;
 	}
 
 	public void saveProject() {
@@ -375,6 +379,11 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 
 	@Override
 	public void onLoadProjectSuccess(boolean startProjectActivity) {
+
+	}
+
+	@Override
+	public void onLoadProjectFailure() {
 
 	}
 
