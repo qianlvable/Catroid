@@ -2,21 +2,21 @@
  *  Catroid: An on-device visual programming system for Android devices
  *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
  *  published by the Free Software Foundation, either version 3 of the
  *  License, or (at your option) any later version.
- *  
+ *
  *  An additional term exception under section 7 of the GNU Affero
  *  General Public License, version 3, is available at
  *  http://developer.catrobat.org/license_additional_term
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU Affero General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,7 +26,9 @@ import android.content.Context;
 import android.util.Log;
 
 import org.catrobat.catroid.ProjectManager;
+import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
+import org.catrobat.catroid.exceptions.ProjectException;
 import org.catrobat.catroid.soundrecorder.SoundRecorder;
 
 import java.io.BufferedInputStream;
@@ -44,10 +46,6 @@ import java.util.List;
 import java.util.Locale;
 
 public final class UtilFile {
-	public enum FileType {
-		TYPE_IMAGE_FILE, TYPE_SOUND_FILE
-	}
-
 	private static final String TAG = UtilFile.class.getSimpleName();
 
 	// Suppress default constructor for noninstantiability
@@ -171,6 +169,20 @@ public final class UtilFile {
 		}
 	}
 
+	public static void loadExistingOrCreateStandardDroneProject(Context context) {
+		String droneStandardProjectName = context.getString(R.string.default_drone_project_name);
+		try {
+			ProjectManager.getInstance().loadProject(droneStandardProjectName, context);
+		} catch (ProjectException cannotLoadDroneProjectException) {
+			Log.e(TAG, "Cannot load standard drone project" + cannotLoadDroneProjectException);
+		}
+
+		String currentName = ProjectManager.getInstance().getCurrentProject().getName();
+		if (!currentName.equals(droneStandardProjectName)) {
+			ProjectManager.getInstance().initializeDroneProject(context);
+		}
+	}
+
 	/**
 	 * returns a list of strings of all projectnames in the catroid folder
 	 */
@@ -193,7 +205,7 @@ public final class UtilFile {
 		return projectList;
 	}
 
-	public static File copyFile(File destinationFile, File sourceFile, File directory) throws IOException {
+	public static File copyFile(File destinationFile, File sourceFile) throws IOException {
 		FileInputStream inputStream = null;
 		FileChannel inputChannel = null;
 		FileOutputStream outputStream = null;
@@ -254,7 +266,8 @@ public final class UtilFile {
 	public static File copySoundFromResourceIntoProject(String projectName, String outputFilename, int resourceId,
 			Context context, boolean prependMd5ToFilename) throws IllegalArgumentException, IOException {
 		if (!outputFilename.toLowerCase(Locale.US).endsWith(SoundRecorder.RECORDING_EXTENSION)) {
-			throw new IllegalArgumentException("Only Files with extension " + SoundRecorder.RECORDING_EXTENSION + " allowed");
+			throw new IllegalArgumentException("Only Files with extension " + SoundRecorder.RECORDING_EXTENSION
+					+ " allowed");
 		}
 		return copyFromResourceIntoProject(projectName, Constants.SOUND_DIRECTORY, outputFilename, resourceId, context,
 				prependMd5ToFilename);
@@ -294,8 +307,7 @@ public final class UtilFile {
 	public static String encodeSpecialCharsForFileSystem(String projectName) {
 		if (projectName.equals(".") || projectName.equals("..")) {
 			projectName = projectName.replace(".", "%2E");
-		}
-		else {
+		} else {
 			projectName = projectName.replace("%", "%25");
 			projectName = projectName.replace("\"", "%22");
 			projectName = projectName.replace("/", "%2F");
@@ -326,4 +338,7 @@ public final class UtilFile {
 		return projectName;
 	}
 
+	public enum FileType {
+		TYPE_IMAGE_FILE, TYPE_SOUND_FILE
+	}
 }

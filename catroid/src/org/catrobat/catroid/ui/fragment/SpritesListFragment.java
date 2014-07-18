@@ -51,6 +51,7 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 
+import org.catrobat.catroid.BuildConfig;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.LookData;
@@ -102,8 +103,7 @@ public class SpritesListFragment extends SherlockListFragment implements OnSprit
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_sprites_list, null);
-		return rootView;
+		return inflater.inflate(R.layout.fragment_sprites_list, container);
 	}
 
 	@Override
@@ -219,6 +219,10 @@ public class SpritesListFragment extends SherlockListFragment implements OnSprit
 
 		getSherlockActivity().getMenuInflater().inflate(R.menu.context_menu_default, menu);
 		menu.findItem(R.id.context_menu_copy).setVisible(true);
+		if (!BuildConfig.FEATURE_BACKPACK_ENABLED) {
+			menu.findItem(R.id.context_menu_backpack).setVisible(false);
+			menu.findItem(R.id.context_menu_unpacking).setVisible(false);
+		}
 
 	}
 
@@ -316,10 +320,6 @@ public class SpritesListFragment extends SherlockListFragment implements OnSprit
 			BottomBar.hideBottomBar(getActivity());
 			isRenameActionMode = false;
 		}
-	}
-
-	public Sprite getSpriteToEdit() {
-		return spriteToEdit;
 	}
 
 	public void handleCheckBoxClick(View view) {

@@ -98,6 +98,12 @@ public class MainMenuActivity extends BaseActivity implements OnLoadProjectCompl
 		if (!BackPackListManager.isBackpackFlag()) {
 			BackPackListManager.getInstance().setSoundInfoArrayListEmpty();
 		}
+
+		//TODO Drone do not create project for now
+		//if (BuildConfig.FEATURE_PARROT_AR_DRONE_ENABLED && DroneUtils.isDroneSharedPreferenceEnabled(getApplication(), false)) {
+		//	UtilFile.loadExistingOrCreateStandardDroneProject(this);
+		//}
+		//SettingsActivity.setTermsOfServiceAgreedPermanently(this, false);
 	}
 
 	@Override
@@ -108,7 +114,10 @@ public class MainMenuActivity extends BaseActivity implements OnLoadProjectCompl
 			return;
 		}
 
+		findViewById(R.id.progress_circle).setVisibility(View.GONE);
+
 		UtilFile.createStandardProjectIfRootDirectoryIsEmpty(this);
+
 		PreStageActivity.shutdownPersistentResources();
 		setMainMenuButtonContinueText();
 		findViewById(R.id.main_menu_button_continue).setEnabled(true);
@@ -175,7 +184,9 @@ public class MainMenuActivity extends BaseActivity implements OnLoadProjectCompl
 	}
 
 	public void handleContinueButton() {
-		loadProjectInBackground(Utils.getCurrentProjectName(this));
+		Intent intent = new Intent(this, ProjectActivity.class);
+		intent.putExtra(Constants.PROJECTNAME_TO_LOAD, Utils.getCurrentProjectName(this));
+		startActivity(intent);
 	}
 
 	private void loadProjectInBackground(String projectName) {
@@ -204,6 +215,7 @@ public class MainMenuActivity extends BaseActivity implements OnLoadProjectCompl
 	}
 
 	public void handleProgramsButton(View view) {
+		findViewById(R.id.progress_circle).setVisibility(View.VISIBLE);
 		if (!viewSwitchLock.tryLock()) {
 			return;
 		}
@@ -318,5 +330,10 @@ public class MainMenuActivity extends BaseActivity implements OnLoadProjectCompl
 				spannableStringBuilder.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
 		mainMenuButtonContinue.setText(spannableStringBuilder);
+	}
+
+	@Override
+	public void onLoadProjectFailure() {
+
 	}
 }

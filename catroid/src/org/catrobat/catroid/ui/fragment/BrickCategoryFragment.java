@@ -39,6 +39,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.ui.BottomBar;
+import org.catrobat.catroid.ui.SettingsActivity;
 import org.catrobat.catroid.ui.ViewSwitchLock;
 import org.catrobat.catroid.ui.adapter.BrickCategoryAdapter;
 
@@ -68,7 +69,7 @@ public class BrickCategoryFragment extends SherlockListFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_brick_categories, null);
+		View rootView = inflater.inflate(R.layout.fragment_brick_categories, container, false);
 
 		setUpActionBar();
 		BottomBar.hideBottomBar(getSherlockActivity());
@@ -149,6 +150,10 @@ public class BrickCategoryFragment extends SherlockListFragment {
 		if (ProjectManager.getInstance().getCurrentProject().checkIfLegoProject()
 				|| sharedPreferences.getBoolean("setting_mindstorm_bricks", false)) {
 			categories.add(inflater.inflate(R.layout.brick_category_lego_nxt, null));
+		}
+
+		if (SettingsActivity.isDroneSharedPreferenceEnabled(getActivity(), false)) {
+			categories.add(inflater.inflate(R.layout.brick_category_drone, null));
 		}
 
 		adapter = new BrickCategoryAdapter(categories);
