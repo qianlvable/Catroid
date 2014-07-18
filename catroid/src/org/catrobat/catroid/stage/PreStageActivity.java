@@ -17,7 +17,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU Affero General Public License for more details.
  *
- *  You should have received a copy of the GNU Affero General Public 
+ *  You should have received a copy of the GNU Affero General Public
 
  License
 
@@ -43,6 +43,8 @@ import android.widget.Toast;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
+import org.catrobat.catroid.arduino.Arduino;
+import org.catrobat.catroid.arduino.ArduinoReadPinData;
 import org.catrobat.catroid.bluetooth.BluetoothManager;
 import org.catrobat.catroid.bluetooth.DeviceListActivity;
 import org.catrobat.catroid.common.Constants;
@@ -72,6 +74,7 @@ public class PreStageActivity extends BaseActivity {
 	private int requiredResourceCounter;
 
 	private static LegoNXT legoNXT;
+	private static Arduino arduino;
 	private boolean autoConnect = false;
 	private ProgressDialog connectingProgressDialog;
 	private static TextToSpeech textToSpeech;
@@ -111,6 +114,35 @@ public class PreStageActivity extends BaseActivity {
 				resourceFailed();
 			} else if (bluetoothState == BluetoothManager.BLUETOOTH_ALREADY_ON) {
 				if (legoNXT == null) {
+					startBluetoothCommunication(true);
+				} else {
+					resourceInitialized();
+				}
+			}
+		}
+
+		if ((requiredResources & Brick.BLUETOOTH_SENSORS_ARDUINO) > 0) {
+			/*//set flag to start thread to update sensor values in formula editor
+			ArduinoReadPinData sensor = ArduinoReadPinData.getArduinoSensorInstance();
+			sensor.setBooleanArduinoBricks(true);
+			Bundle bundle = new Bundle();
+			bundle.putInt(DeviceListActivity.RESOURCE_CONSTANT, Brick.BLUETOOTH_SENSORS_ARDUINO);
+			bundle.putString(DeviceListActivity.RESOURCE_NAME_TEXT,
+					getResources().getString(R.string.select_device_arduino));
+			BTResourceQueue.add(bundle);
+		} else {
+			//disable flag to start thread to update sensor values in formula editor
+			ArduinoReadPinData sensor = ArduinoReadPinData.getArduinoSensorInstance();
+			sensor.setBooleanArduinoBricks(false);*/
+			BluetoothManager bluetoothManager = new BluetoothManager(this);
+
+			int bluetoothState = bluetoothManager.activateBluetooth();
+			if (bluetoothState == BluetoothManager.BLUETOOTH_NOT_SUPPORTED) {
+
+				Toast.makeText(PreStageActivity.this, R.string.notification_blueth_err, Toast.LENGTH_LONG).show();
+				resourceFailed();
+			} else if (bluetoothState == BluetoothManager.BLUETOOTH_ALREADY_ON) {
+				if (arduino == null) {
 					startBluetoothCommunication(true);
 				} else {
 					resourceInitialized();
@@ -174,6 +206,9 @@ public class PreStageActivity extends BaseActivity {
 		if (legoNXT != null) {
 			legoNXT.pauseCommunicator();
 		}
+		if(arduino != null) {
+			arduino.pauseCommunicator();
+		}
 	}
 
 	//all resources that should not have to be reinitialized every stage start
@@ -181,6 +216,10 @@ public class PreStageActivity extends BaseActivity {
 		if (legoNXT != null) {
 			legoNXT.destroyCommunicator();
 			legoNXT = null;
+		}
+		if (arduino != null) {
+			arduino.destroyCommunicator();
+			arduino = null;
 		}
 		deleteSpeechFiles();
 	}
