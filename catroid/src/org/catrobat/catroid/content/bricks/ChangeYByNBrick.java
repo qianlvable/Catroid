@@ -71,7 +71,11 @@ public class ChangeYByNBrick extends BrickBaseType implements OnClickListener, F
 
 	@Override
 	public int getRequiredResources() {
-		return NO_RESOURCES;
+		if (yMovement.containsArduinoSensors() == true) {
+			return BLUETOOTH_SENSORS_ARDUINO;
+		} else {
+			return NO_RESOURCES;
+		}
 	}
 
 	@Override
