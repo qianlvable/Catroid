@@ -64,6 +64,10 @@ public class InternToExternGenerator {
 		INTERN_EXTERN_LANGUAGE_CONVERTER_MAP.put(Functions.MIN.name(), R.string.formula_editor_function_min);
 		INTERN_EXTERN_LANGUAGE_CONVERTER_MAP.put(Functions.TRUE.name(), R.string.formula_editor_function_true);
 		INTERN_EXTERN_LANGUAGE_CONVERTER_MAP.put(Functions.FALSE.name(), R.string.formula_editor_function_false);
+		INTERN_EXTERN_LANGUAGE_CONVERTER_MAP.put(Functions.ARDUINODIGITAL.name(),
+				R.string.formula_editor_function_arduino_read_pin_value_digital);
+		INTERN_EXTERN_LANGUAGE_CONVERTER_MAP.put(Functions.ARDUINOANALOG.name(),
+				R.string.formula_editor_function_arduino_read_pin_value_analog);
 		INTERN_EXTERN_LANGUAGE_CONVERTER_MAP.put(Sensors.X_ACCELERATION.name(),
 				R.string.formula_editor_sensor_x_acceleration);
 		INTERN_EXTERN_LANGUAGE_CONVERTER_MAP.put(Sensors.Y_ACCELERATION.name(),

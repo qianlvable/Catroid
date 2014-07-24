@@ -100,6 +100,10 @@ public class InternFormulaKeyboardAdapter {
 				return buildFunctionWithoutParametersAndBrackets(Functions.TRUE);
 			case R.string.formula_editor_function_false:
 				return buildFunctionWithoutParametersAndBrackets(Functions.FALSE);
+			case R.string.formula_editor_function_arduino_read_pin_value_digital:
+				return buildSingleParameterFunction(Functions.ARDUINODIGITAL, "0");
+			case R.string.formula_editor_function_arduino_read_pin_value_analog:
+				return buildSingleParameterFunction(Functions.ARDUINOANALOG, "0");
 
 				//SENSOR
 

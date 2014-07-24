@@ -33,6 +33,7 @@ import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.formulaeditor.FormulaElement.ElementType;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Formula implements Serializable {
 
@@ -84,6 +85,19 @@ public class Formula implements Serializable {
 			formulaTree = new FormulaElement(ElementType.NUMBER, value.toString(), null);
 			internFormula = new InternFormula(formulaTree.getInternTokenList());
 		}
+	}
+
+	//this is needed if there is a sensor that should be selected by default
+	public Formula(String value) {
+		if (value.equalsIgnoreCase(Functions.ARDUINOANALOG.toString())) {
+			formulaTree = new FormulaElement(ElementType.SENSOR, Functions.ARDUINOANALOG.toString(), null);
+		} else if (value.equalsIgnoreCase(Functions.ARDUINODIGITAL.toString())) {
+			formulaTree = new FormulaElement(ElementType.SENSOR, Functions.ARDUINODIGITAL.toString(), null);
+		} else {
+			formulaTree = new FormulaElement(ElementType.NUMBER, value.toString(), null);
+		}
+
+		internFormula = new InternFormula(formulaTree.getInternTokenList());
 	}
 
 	public void setDisplayText(String text) {
@@ -191,6 +205,18 @@ public class Formula implements Serializable {
 		}
 
 		return new Formula(0);
+	}
+
+	//I'm using "Arduino Sensors" as Functions -> to discuss if good/bad
+	public boolean containsArduinoSensors() {
+		List<InternToken> internTokenList = formulaTree.getInternTokenList();
+		for (InternToken internToken : internTokenList) {
+			if ((internToken.getTokenStringValue().equalsIgnoreCase(Functions.ARDUINOANALOG.toString()) || internToken
+					.getTokenStringValue().equalsIgnoreCase(Functions.ARDUINODIGITAL.toString()))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
