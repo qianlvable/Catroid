@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+/**
  *  Catroid: An on-device visual programming system for Android devices
  *  Copyright (C) 2010-2013 The Catrobat Team
  *  (<http://developer.catrobat.org/credits>)
@@ -20,23 +19,48 @@
  *  
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+ */
+package org.catrobat.catroid.arduino;
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="setting_mindstorm_bricks"
-        android:summary="@string/preference_description_mindstorm_bricks"
-        android:title="@string/preference_title_enable_mindstorm_bricks" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="setting_arduino_bricks"
-        android:summary="@string/preference_description_arduino_bricks"
-        android:title="@string/preference_title_enable_arduino_bricks" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="setting_parrot_ar_drone_bricks"
-        android:summary="@string/preference_description_quadcopter_bricks"
-        android:title="@string/preference_title_enable_quadcopter_bricks" />
+public class ArduinoControlCommands {
 
-</PreferenceScreen>
+	private byte[] buffer = new byte[3];
+
+	private int pinNumberLowerByte;
+	private int pinNumberHigherByte;
+	private int pinValue;
+
+	public void setPinNumberLowerByte(int newPinNumberLowerByte) {
+		pinNumberLowerByte = newPinNumberLowerByte;
+	}
+
+	public void setPinNumberHigherByte(int newPinNumberHigherByte) {
+		pinNumberHigherByte = newPinNumberHigherByte;
+	}
+
+	public void setPinValue(int newPinValue) {
+		pinValue = newPinValue;
+	}
+
+	public byte[] resetArduino() {
+		buffer[0] = 48; //0
+		buffer[1] = 50; //2
+		buffer[2] = 72; //H
+		return buffer;
+	}
+
+	public byte[] pauseArduino() {
+		buffer[0] = 00; //0
+		buffer[1] = 00; //0
+		buffer[2] = 00; //0
+		return buffer;
+	}
+
+	public byte[] getCommandMessage() {
+		buffer[0] = (byte) pinNumberLowerByte;
+		buffer[1] = (byte) pinNumberHigherByte;
+		buffer[2] = (byte) pinValue;
+		return buffer;
+	}
+
+}

@@ -143,6 +143,10 @@ public class BrickCategoryFragment extends SherlockListFragment {
 			categories.add(inflater.inflate(R.layout.brick_category_lego_nxt, null));
 		}
 
+		if (sharedPreferences.getBoolean("setting_arduino_bricks", false)) {
+			categories.add(inflater.inflate(R.layout.brick_category_arduino, null));
+		}
+
 		if (SettingsActivity.isDroneSharedPreferenceEnabled(getActivity(), false)) {
 			categories.add(inflater.inflate(R.layout.brick_category_drone, null));
 		}
