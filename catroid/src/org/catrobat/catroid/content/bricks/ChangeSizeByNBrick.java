@@ -66,7 +66,11 @@ public class ChangeSizeByNBrick extends BrickBaseType implements OnClickListener
 
 	@Override
 	public int getRequiredResources() {
-		return NO_RESOURCES;
+		if (size.containsArduinoSensors() == true) {
+			return BLUETOOTH_SENSORS_ARDUINO;
+		} else {
+			return NO_RESOURCES;
+		}
 	}
 
 	@Override
