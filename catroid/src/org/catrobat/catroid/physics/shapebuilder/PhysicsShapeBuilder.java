@@ -30,6 +30,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 
 import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.physics.PhysicsWorld;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +38,9 @@ import java.util.List;
 import java.util.Map;
 
 public class PhysicsShapeBuilder {
+
 	private static final String TAG = PhysicsShapeBuilder.class.getSimpleName();
+	private static final float OFFSET_VALUE = 1 / (2 * PhysicsWorld.RATIO);
 	private final Map<String, Shape[]> shapeMap = new HashMap<String, Shape[]>();
 	private PhysicsShapeBuilderStrategy strategy = new PhysicsShapeBuilderStrategyFastHull();
 
@@ -62,9 +65,9 @@ public class PhysicsShapeBuilder {
 			Pixmap thumb = new Pixmap((int) (pixmap.getWidth() * scaleLevel), (int) (pixmap.getHeight() * scaleLevel), pixmap.getFormat());
 			Pixmap.setFilter(Pixmap.Filter.NearestNeighbour);
 			thumb.drawPixmap(pixmap, 0, 0, pixmap.getWidth(), pixmap.getHeight(), 0, 0, thumb.getWidth(), thumb.getHeight());
-			shapes = strategy.build(thumb, scaleFactor);
+			shapes = strategy.build(pixmap, scaleFactor);
 			thumb.dispose();
-			shapes = normalize(shapes, scaleLevel);
+			//shapes = normalize(shapes, scaleLevel);
 			shapeMap.put(key, shapes);
 		}
 		return scaleShapes(shapes, scaleFactor);
@@ -95,7 +98,15 @@ public class PhysicsShapeBuilder {
 			for (int index = 0; index < polygon.getVertexCount(); index++) {
 				Vector2 vertex = new Vector2();
 				polygon.getVertex(index, vertex);
-				vertex = vertex.mul(scaleFactor);
+
+				if (Math.abs(scaleFactor) < 0.001f) {
+					vertex = vertex.mul(scaleFactor);
+				} else if (Math.abs(scaleFactor - 1f) > 0.001f) {
+					Vector2 offset = new Vector2();
+					offset.x = vertex.x < -0.001f ? -OFFSET_VALUE : vertex.x > 0.001f ? OFFSET_VALUE : 0f;
+					offset.y = vertex.y < 0.001f ? -OFFSET_VALUE : vertex.y > 0.001f ? OFFSET_VALUE : 0f;
+					vertex = vertex.add(offset).mul(scaleFactor).sub(offset);
+				}
 				vertices.add(vertex);
 			}
 
