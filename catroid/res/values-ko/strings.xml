@@ -189,7 +189,7 @@
     <string name="brick_change_size_by" >"다음 비율로 크기 변경하기"</string >
     <string name="brick_hide" >"숨기기"</string >
     <string name="brick_show" >"보이기"</string >
-    <string name="brick_set_ghost_effect" >"유령 효과 설정"</string >
+    <string name="brick_set_transparency" >"유령 효과 설정"</string >
     <string name="brick_change_ghost_effect" >"유령 효과 바꾸기"</string >
     <string name="brick_set_brightness" >"밝기 설정"</string >
     <string name="brick_change_brightness" >"밝기 변경"</string >
@@ -328,7 +328,7 @@
     <string name="formula_editor_sensor_y_inclination" >y_inclination</string >
     <string name="formula_editor_object_x" >"looks-x"</string >
     <string name="formula_editor_object_y" >"looks-y"</string >
-    <string name="formula_editor_object_ghosteffect" >"looks-ghosteffect"</string >
+    <string name="formula_editor_object_transparency" >"looks-transparency"</string >
     <string name="formula_editor_object_brightness" >"looks-brightness"</string >
     <string name="formula_editor_object_size" >"looks-size"</string >
     <string name="formula_editor_object_rotation" >"looks-rotation"</string >

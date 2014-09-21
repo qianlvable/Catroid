@@ -208,7 +208,7 @@
     <string name="brick_change_size_by" >"Mude o tamanho para"</string >
     <string name="brick_hide" >"Desapareça"</string >
     <string name="brick_show" >"Apareça"</string >
-    <string name="brick_set_ghost_effect" >"Definir transparência"</string >
+    <string name="brick_set_transparency" >"Definir transparência"</string >
     <string name="brick_change_ghost_effect" >"Alterar transparência"</string >
     <string name="brick_set_brightness" >"Ajustar o brilho"</string >
     <string name="brick_change_brightness" >"Alterar o brilho"</string >

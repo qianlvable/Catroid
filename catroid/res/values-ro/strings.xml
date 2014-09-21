@@ -194,7 +194,7 @@
     <string name="brick_set_y" >Setează Y la:</string >
     <string name="brick_glide" >Alunecă</string >
     <string name="brick_when" >Cînd</string >
-    <string name="brick_set_ghost_effect" >Setează transparența</string >
+    <string name="brick_set_transparency" >Setează transparența</string >
     <string name="brick_change_ghost_effect" >Schimbă transparența</string >
     <string name="brick_set_brightness" >Setează lucirea</string >
     <string name="brick_change_brightness" >Schimbă lucirea</string >

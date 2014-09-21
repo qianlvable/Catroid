@@ -297,7 +297,7 @@
     <string name="brick_change_size_by">"Verander grootte met"</string>
     <string name="brick_hide">"Verdwijn"</string>
     <string name="brick_show">"Verschijn"</string>
-    <string name="brick_set_ghost_effect">"Stel doorzichtigheid"</string>
+    <string name="brick_set_transparency">"Stel doorzichtigheid"</string>
     <string name="brick_change_ghost_effect">"Verander doorzichtigheid"</string>
     <string name="brick_set_brightness">"Stel helderheid"</string>
     <string name="brick_change_brightness">"Verander helderheid"</string>
@@ -484,7 +484,7 @@
     <string name="formula_editor_sensor_loudness">"luidheid"</string>
     <string name="formula_editor_object_x">"positie_x"</string>
     <string name="formula_editor_object_y">"positie_y"</string>
-    <string name="formula_editor_object_ghosteffect">"doorzichtigheid"</string>
+    <string name="formula_editor_object_transparency">"doorzichtigheid"</string>
     <string name="formula_editor_object_brightness">"helderheid"</string>
     <string name="formula_editor_object_size">"grootte"</string>
     <string name="formula_editor_object_rotation">"richting"</string>

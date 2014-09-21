@@ -30,29 +30,30 @@ import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.formulaeditor.Formula;
 import org.catrobat.catroid.formulaeditor.InterpretationException;
 
-public class SetGhostEffectAction extends TemporalAction {
+public class ChangeTransparencyByNAction extends TemporalAction {
 
 	private Sprite sprite;
-	private Formula transparency;
+	private Formula changeTransparency;
 
 	@Override
-	protected void update(float percent) {
-		Float newTransparency;
+	protected void update(float delta) {
+		Float newChangeTransparency;
 		try {
-			newTransparency = transparency == null ? Float.valueOf(0f) : transparency.interpretFloat(sprite);
+			newChangeTransparency = changeTransparency == null ? Float.valueOf(0f) : changeTransparency
+					.interpretFloat(sprite);
         } catch (InterpretationException interpretationException) {
             Log.d(getClass().getSimpleName(), "Formula interpretation for this specific Brick failed.", interpretationException);
             return;
         }
-		sprite.look.setTransparencyInUserInterfaceDimensionUnit(newTransparency);
+		sprite.look.changeTransparencyInUserInterfaceDimensionUnit(newChangeTransparency);
 	}
 
 	public void setSprite(Sprite sprite) {
 		this.sprite = sprite;
 	}
 
-	public void setTransparency(Formula transparency) {
-		this.transparency = transparency;
+	public void setTransparency(Formula value) {
+		this.changeTransparency = value;
 	}
 
 }

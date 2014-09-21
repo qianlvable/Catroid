@@ -204,7 +204,7 @@
     <string name="brick_set_y" >Установить Y к:</string >
     <string name="brick_glide" >Скользить</string >
     <string name="brick_when" >Когда</string >
-    <string name="brick_set_ghost_effect" >Установить прозрачность</string >
+    <string name="brick_set_transparency" >Установить прозрачность</string >
     <string name="brick_change_ghost_effect" >Изменить прозрачность</string >
     <string name="brick_set_brightness" >Установить яркость</string >
     <string name="brick_change_brightness" >Изменить яркость</string >

@@ -376,7 +376,7 @@
     <string name="brick_change_size_by">Ändere Größe um</string>
     <string name="brick_hide">Verstecke dich</string>
     <string name="brick_show">Zeige dich</string>
-    <string name="brick_set_ghost_effect">"Setze Transparenz "</string>
+    <string name="brick_set_transparency">"Setze Transparenz "</string>
     <string name="brick_change_ghost_effect">"Ändere Transparenz "</string>
     <string name="brick_set_brightness">"Setze Helligkeit "</string>
     <string name="brick_change_brightness">"Ändere Helligkeit "</string>
@@ -641,7 +641,7 @@
     <string name="formula_editor_sensor_face_y_position">Gesichtsposition_y</string>
     <string name="formula_editor_object_x">Position_x</string>
     <string name="formula_editor_object_y">Position_y</string>
-    <string name="formula_editor_object_ghosteffect">Transparenz</string>
+    <string name="formula_editor_object_transparency">Transparenz</string>
     <string name="formula_editor_object_brightness">Helligkeit</string>
     <string name="formula_editor_object_size">Größe</string>
     <string name="formula_editor_object_rotation">Richtung</string>
