@@ -1944,9 +1944,11 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 		assertFalse("Select All is still shown", solo.getView(R.id.select_all).isShown());
 
 		UiTestUtils.clickOnCheckBox(solo, 0);
+		solo.sleep(100);
 		assertTrue("Select All is not shown", solo.getView(R.id.select_all).isShown());
 
 		UiTestUtils.clickOnCheckBox(solo, 0);
+		solo.sleep(100);
 		assertFalse("Select All is still shown", solo.getView(R.id.select_all).isShown());
 	}
 
