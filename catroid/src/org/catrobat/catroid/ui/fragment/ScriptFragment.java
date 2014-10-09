@@ -139,6 +139,8 @@ public class ScriptFragment extends ScriptActivityFragment implements OnCategory
 	public void onStart() {
 		super.onStart();
 		BottomBar.showBottomBar(getActivity());
+		BottomBar.showPlayButton(getActivity());
+		BottomBar.showAddButton(getActivity());
 		initListeners();
 	}
 
