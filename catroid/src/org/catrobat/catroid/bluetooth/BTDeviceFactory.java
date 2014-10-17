@@ -22,22 +22,25 @@
  */
 package org.catrobat.catroid.bluetooth;
 
-import org.catrobat.catroid.common.CatrobatService;
-import org.catrobat.catroid.lego.mindstorm.nxt.LegoNXT;
+import android.content.Context;
+import org.catrobat.catroid.lego.mindstorm.nxt.LegoNXTImpl;
 
-import java.util.UUID;
+public class BTDeviceFactory {
 
-public interface BTDeviceService extends CatrobatService {
+	public <T extends BTDeviceService> BTDeviceService create(Class<T> service, Context context) {
 
-    public static final Class<LegoNXT> LEGO_NXT = LegoNXT.class;
-//    public static final Class<Arduino> ARDUINO = Arduino.class;
-//    public static final Class<Albert> ALBERT = Albert.class;
+		if (service == BTDeviceService.LEGO_NXT) {
+			return new LegoNXTImpl(context);
+		}
 
+//        if (service == BTDeviceService.ALBERT) {
+//            return new Albert();
+//        }
 
-    public String getName();
-    public Class<? extends BTDeviceService> getServiceType();
-    public void setConnection(BluetoothConnection connection);
-	public void disconnect();
+//        if (service == BTDeviceService.ARDUINO) {
+//            return new Arduino();
+//        }
 
-    public UUID getBluetoothDeviceUUID();
+		return null; // may throw exception
+	}
 }

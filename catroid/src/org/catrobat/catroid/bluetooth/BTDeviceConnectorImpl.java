@@ -23,34 +23,39 @@
 package org.catrobat.catroid.bluetooth;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 
-public class BluetoothManager {
+import org.catrobat.catroid.common.ServiceProvider;
 
-	public static final int REQUEST_ENABLE_BT = 2000;
-	public static final int BLUETOOTH_NOT_SUPPORTED = -1;
-	public static final int BLUETOOTH_ALREADY_ON = 1;
-	public static final int BLUETOOTH_ACTIVATING = 0;
-	private BluetoothAdapter bluetoothAdapter;
+import java.util.ArrayList;
+import java.util.Collection;
 
-	private final Activity activity;
+public class BTDeviceConnectorImpl implements BTDeviceConnector {
 
-	public BluetoothManager(Activity activity) {
-		this.activity = activity;
+	public Collection<BTDeviceService> runningBTServices = new ArrayList<BTDeviceService>();
+
+	public void connectDevice(Class<? extends BTDeviceService> serviceToStart, Activity activity, int requestCode) {
+		Intent intent = createStartIntent(serviceToStart, activity);
+		activity.startActivityForResult(intent, requestCode);
 	}
 
-	public int activateBluetooth() {
-		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		if (bluetoothAdapter == null) {
-			return BLUETOOTH_NOT_SUPPORTED;
-		}
-		if (!bluetoothAdapter.isEnabled()) {
-			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-			return BLUETOOTH_ACTIVATING;
-		} else {
-			return BLUETOOTH_ALREADY_ON;
-		}
+	@Override
+	public void deviceConnected(BTDeviceService service) {
+		runningBTServices.add(service);
 	}
+
+	public void disconnectDevices() {
+		for (BTDeviceService service : runningBTServices) {
+			service.disconnect();
+		}
+
+		runningBTServices.clear();
+	}
+
+	private Intent createStartIntent(Class<? extends BTDeviceService> serviceToStart, Activity activity) {
+		Intent intent = new Intent(activity, BTConnectDeviceActivity.class);
+		intent.putExtra(BTConnectDeviceActivity.SERVICE_TO_START, serviceToStart);
+		return intent;
+	}
+
 }
