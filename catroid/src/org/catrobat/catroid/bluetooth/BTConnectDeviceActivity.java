@@ -54,9 +54,13 @@ public class BTConnectDeviceActivity extends Activity {
 	private ArrayAdapter<String> pairedDevicesArrayAdapter;
 	private ArrayAdapter<String> newDevicesArrayAdapter;
 
-	private BTDeviceFactory btDeviceFactory = new BTDeviceFactory();
+	private static BTDeviceFactory btDeviceFactory;
 
-	private BTDeviceService deviceService;
+	protected BTDeviceService deviceService;
+
+	public static void setDeviceFactory(BTDeviceFactory deviceFactory) {
+		btDeviceFactory = deviceFactory;
+	}
 
 	private AdapterView.OnItemClickListener deviceClickListener = new AdapterView.OnItemClickListener() {
 
@@ -121,7 +125,12 @@ public class BTConnectDeviceActivity extends Activity {
 
 	protected void setDeviceService() {
 		Class<BTDeviceService> serviceType = (Class<BTDeviceService>)getIntent().getSerializableExtra(SERVICE_TO_START);
-		deviceService = btDeviceFactory.create(serviceType, this);
+
+		if (btDeviceFactory == null) {
+			btDeviceFactory = new BTDeviceFactoryImpl();
+		}
+
+		deviceService = btDeviceFactory.create(serviceType, this.getApplicationContext());
 	}
 
 	@Override

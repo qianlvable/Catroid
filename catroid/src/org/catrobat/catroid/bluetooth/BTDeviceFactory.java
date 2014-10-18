@@ -23,24 +23,9 @@
 package org.catrobat.catroid.bluetooth;
 
 import android.content.Context;
-import org.catrobat.catroid.lego.mindstorm.nxt.LegoNXTImpl;
 
-public class BTDeviceFactory {
+public interface BTDeviceFactory {
 
-	public <T extends BTDeviceService> BTDeviceService create(Class<T> service, Context context) {
+	public <T extends BTDeviceService> BTDeviceService create(Class<T> service, Context applicationContext);
 
-		if (service == BTDeviceService.LEGO_NXT) {
-			return new LegoNXTImpl(context);
-		}
-
-//        if (service == BTDeviceService.ALBERT) {
-//            return new Albert();
-//        }
-
-//        if (service == BTDeviceService.ARDUINO) {
-//            return new Arduino();
-//        }
-
-		return null; // may throw exception
-	}
 }

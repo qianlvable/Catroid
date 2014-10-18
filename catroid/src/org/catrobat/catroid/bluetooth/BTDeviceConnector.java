@@ -24,8 +24,9 @@ package org.catrobat.catroid.bluetooth;
 
 import android.app.Activity;
 import org.catrobat.catroid.common.CatrobatService;
+import org.catrobat.catroid.stage.StageResourceInterface;
 
-public interface BTDeviceConnector extends CatrobatService
+public interface BTDeviceConnector extends CatrobatService, StageResourceInterface
 {
 	public void connectDevice(Class<? extends BTDeviceService> service, Activity activity, int requestCode);
 	public void deviceConnected(BTDeviceService service);

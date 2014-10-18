@@ -23,6 +23,7 @@
 package org.catrobat.catroid.bluetooth;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Intent;
 
 import org.catrobat.catroid.common.ServiceProvider;
@@ -32,7 +33,7 @@ import java.util.Collection;
 
 public class BTDeviceConnectorImpl implements BTDeviceConnector {
 
-	public Collection<BTDeviceService> runningBTServices = new ArrayList<BTDeviceService>();
+	private Collection<BTDeviceService> runningBTServices = new ArrayList<BTDeviceService>();
 
 	public void connectDevice(Class<? extends BTDeviceService> serviceToStart, Activity activity, int requestCode) {
 		Intent intent = createStartIntent(serviceToStart, activity);
@@ -47,15 +48,45 @@ public class BTDeviceConnectorImpl implements BTDeviceConnector {
 	public void disconnectDevices() {
 		for (BTDeviceService service : runningBTServices) {
 			service.disconnect();
+			ServiceProvider.unregisterService(service.getServiceType());
 		}
 
 		runningBTServices.clear();
 	}
 
-	private Intent createStartIntent(Class<? extends BTDeviceService> serviceToStart, Activity activity) {
+	protected Intent createStartIntent(Class<? extends BTDeviceService> serviceToStart, Activity activity) {
 		Intent intent = new Intent(activity, BTConnectDeviceActivity.class);
 		intent.putExtra(BTConnectDeviceActivity.SERVICE_TO_START, serviceToStart);
 		return intent;
 	}
 
+	@Override
+	public void initialise() {
+		for (BTDeviceService service : runningBTServices) {
+			service.initialise();
+		}
+	}
+
+	@Override
+	public void start() {
+		for (BTDeviceService service : runningBTServices) {
+			service.start();
+		}
+	}
+
+	@Override
+	public void pause() {
+		for (BTDeviceService service : runningBTServices) {
+			service.pause();
+		}
+	}
+
+	@Override
+	public void destroy() {
+		for (BTDeviceService service : runningBTServices) {
+			service.destroy();
+		}
+
+		disconnectDevices();
+	}
 }
