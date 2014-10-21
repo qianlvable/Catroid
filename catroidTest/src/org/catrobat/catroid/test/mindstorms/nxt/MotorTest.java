@@ -32,17 +32,49 @@ import org.catrobat.catroid.lego.mindstorm.nxt.NXTMotor;
 
 public class MotorTest extends AndroidTestCase {
 
+	private NXTMotor motor;
+	private MindstormTestConnection connection;
+	private static final byte DIRECT_COMMAND_HEADER = (byte)(CommandType.DIRECT_COMMAND.getByte() | 0x80);
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		this.connection = new MindstormTestConnection();
+		this.motor = new NXTMotor(0, connection);
+	}
+
 	public void testSimpleMotorTest() {
-		MindstormTestConnection connection = new MindstormTestConnection();
-		NXTMotor motor = new NXTMotor(0, connection);
 
-		motor.move(50,360);
-		MindstormCommand command = connection.getLastSentCommand();
+		motor.move(50,360); //calls send
 		//CommandByte.java
-		assertEquals((byte)(CommandType.DIRECT_COMMAND.getByte() | 0x80),command.getRawCommand()[0]);
+		//Set_Output_State überprüfen... aus PDF
+		MindstormCommand command = connection.getLastSentCommand();
+		assertEquals(DIRECT_COMMAND_HEADER,command.getRawCommand()[0]);
 		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(),command.getRawCommand()[1]);
+	}
 
+	public void testMotorTestNegativeSpeed() {
 
+		motor.move(-30,360);
+		MindstormCommand command = connection.getLastSentCommand();
+		assertEquals(DIRECT_COMMAND_HEADER,command.getRawCommand()[3]);
+		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), command.getRawCommand()[3]);
+	}
+	//Tests: move mit 0, negativer Geschwindigkeit, > 100 usw.
+
+	public void testMotorWithZeroValues() {
+
+		motor.move(0,0);
+		MindstormCommand command = connection.getLastSentCommand();
+		assertEquals(DIRECT_COMMAND_HEADER,command.getRawCommand()[0]);
+		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), command.getRawCommand()[1]);
+	}
+
+	public void testMotorWithSpeedOverHundredPercent() {
+		motor.move(200,360);
+		MindstormCommand command = connection.getLastSentCommand();
+		assertEquals(DIRECT_COMMAND_HEADER,command.getRawCommand()[0]);
+		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), command.getRawCommand()[1]);
 
 	}
 }
