@@ -20,18 +20,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.catrobat.catroid.lego.mindstorm;
 
-public interface MindstormConnection {
+package org.catrobat.catroid.test.mindstorms.nxt;
 
-	public void init();
-	public boolean isConnected();
-	public void disconnect();
+import android.test.AndroidTestCase;
 
-	public byte[] sendAndReceive(MindstormCommand command);
+import org.catrobat.catroid.lego.mindstorm.MindstormCommand;
+import org.catrobat.catroid.lego.mindstorm.nxt.CommandByte;
+import org.catrobat.catroid.lego.mindstorm.nxt.CommandType;
+import org.catrobat.catroid.lego.mindstorm.nxt.NXTMotor;
 
-	public void send(MindstormCommand command);
+public class MotorTest extends AndroidTestCase {
 
-	public byte[] receive();
+	public void testSimpleMotorTest() {
+		MindstormTestConnection connection = new MindstormTestConnection();
+		NXTMotor motor = new NXTMotor(0, connection);
 
+		motor.move(50,360);
+		MindstormCommand command = connection.getLastSentCommand();
+		//CommandByte.java
+		assertEquals((byte)(CommandType.DIRECT_COMMAND.getByte() | 0x80),command.getRawCommand()[0]);
+		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(),command.getRawCommand()[1]);
+
+
+
+	}
 }

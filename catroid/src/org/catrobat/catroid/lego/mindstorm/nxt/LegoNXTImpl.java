@@ -30,6 +30,7 @@ import org.catrobat.catroid.bluetooth.BluetoothConnection;
 import org.catrobat.catroid.common.ServiceProvider;
 import org.catrobat.catroid.formulaeditor.Sensors;
 import org.catrobat.catroid.lego.mindstorm.MindstormConnection;
+import org.catrobat.catroid.lego.mindstorm.MindstormConnectionImpl;
 import org.catrobat.catroid.lego.mindstorm.MindstormException;
 import org.catrobat.catroid.lego.mindstorm.MindstormSensor;
 import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTSensor;
@@ -73,7 +74,7 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 
 	@Override
 	public void setConnection(BluetoothConnection btConnection) {
-		this.connection = new MindstormConnection(btConnection);
+		this.connection = new MindstormConnectionImpl(btConnection);
 	}
 
 	@Override

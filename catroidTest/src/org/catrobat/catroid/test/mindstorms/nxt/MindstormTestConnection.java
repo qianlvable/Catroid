@@ -20,18 +20,56 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.catrobat.catroid.lego.mindstorm;
 
-public interface MindstormConnection {
+package org.catrobat.catroid.test.mindstorms.nxt;
 
-	public void init();
-	public boolean isConnected();
-	public void disconnect();
+import org.catrobat.catroid.lego.mindstorm.MindstormCommand;
+import org.catrobat.catroid.lego.mindstorm.MindstormConnection;
 
-	public byte[] sendAndReceive(MindstormCommand command);
+import java.util.LinkedList;
+import java.util.Queue;
 
-	public void send(MindstormCommand command);
+public class MindstormTestConnection implements MindstormConnection {
 
-	public byte[] receive();
+	private Queue<MindstormCommand> sentCommands;
 
+
+	public MindstormTestConnection() {
+		this.sentCommands = new LinkedList<MindstormCommand>();
+	}
+
+	@Override
+	public void init() {
+
+	}
+
+	@Override
+	public boolean isConnected() {
+		return false;
+	}
+
+	@Override
+	public void disconnect() {
+
+	}
+
+	@Override
+	public byte[] sendAndReceive(MindstormCommand command) {
+		send(command);
+		return receive();
+	}
+
+	@Override
+	public void send(MindstormCommand command) {
+		this.sentCommands.add(command);
+	}
+
+	@Override
+	public byte[] receive() {
+		return null;
+	}
+
+	public MindstormCommand getLastSentCommand(){
+		return this.sentCommands.poll();
+	}
 }

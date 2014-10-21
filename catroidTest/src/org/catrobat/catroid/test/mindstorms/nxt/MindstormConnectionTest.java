@@ -20,18 +20,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.catrobat.catroid.lego.mindstorm;
 
-public interface MindstormConnection {
+package org.catrobat.catroid.test.mindstorms.nxt;
 
-	public void init();
-	public boolean isConnected();
-	public void disconnect();
-
-	public byte[] sendAndReceive(MindstormCommand command);
-
-	public void send(MindstormCommand command);
-
-	public byte[] receive();
-
+public class MindstormConnectionTest {
 }

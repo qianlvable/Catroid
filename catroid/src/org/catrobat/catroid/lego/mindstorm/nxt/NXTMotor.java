@@ -35,7 +35,7 @@ public class NXTMotor implements MindstormMotor {
 	private int port;
 	private MindstormConnection connection;
 
-	NXTMotor(int port, MindstormConnection connection) {
+	public NXTMotor(int port, MindstormConnection connection) {
 		this.port = port;
 		this.connection = connection;
 	}
