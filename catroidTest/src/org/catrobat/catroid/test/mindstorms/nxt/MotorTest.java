@@ -56,19 +56,28 @@ public class MotorTest extends AndroidTestCase {
 		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(),command.getRawCommand()[0]);
 	}
 
-	public void testMotorTestNegativeSpeed() {
+	public void testMotorSpeedOverHundred() {
 		byte expectedSpeed = 100;
 		int inputSpeed = 200;
+		byte motorRegulationSpeed = 0x01;
+		byte expectedTurnRatio = 100;
 
 		motor.move(inputSpeed,360);
 		MindstormCommand command = connection.getLastSentCommand();
 
 		byte[] setOutputState = command.getRawCommand();
+
 		assertEquals(DIRECT_COMMAND_HEADER, setOutputState[0]);
 		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), setOutputState[1]); // 0x04
 		assertEquals(USED_PORT, setOutputState[2]);
 		assertEquals(expectedSpeed,setOutputState[3]);
-		assertEquals();
+		assertEquals(NXTMotor.MotorMode.BREAK | NXTMotor.MotorMode.ON |
+				NXTMotor.MotorMode.REGULATED, setOutputState[4]);
+		assertEquals(motorRegulationSpeed,setOutputState[5]);
+		assertEquals(expectedTurnRatio, setOutputState[6]);
+		//assertEquals(,setOutputState[7]);
+
+
 
 
 		//assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), command.getRawCommand()[0]);
