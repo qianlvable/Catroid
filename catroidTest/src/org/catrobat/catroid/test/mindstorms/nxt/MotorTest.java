@@ -38,11 +38,12 @@ public class MotorTest extends AndroidTestCase {
 	private MindstormTestConnection connection;
 	private static final byte DIRECT_COMMAND_HEADER = (byte)(CommandType.DIRECT_COMMAND.getByte() | 0x80);
 
+	private static final int USED_PORT = 0;
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.connection = new MindstormTestConnection();
-		this.motor = new NXTMotor(0, connection);
+		this.motor = new NXTMotor(USED_PORT, connection);
 	}
 
 	public void testSimpleMotorTest() {
@@ -51,20 +52,28 @@ public class MotorTest extends AndroidTestCase {
 		//Set_Output_State überprüfen... aus PDF
 		MindstormCommand command = connection.getLastSentCommand();
 
-
-
-
 	//	assertEquals(DIRECT_COMMAND_HEADER,command.getRawCommand()[0]);
 		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(),command.getRawCommand()[0]);
 	}
 
 	public void testMotorTestNegativeSpeed() {
+		byte expectedSpeed = 100;
+		int inputSpeed = 200;
 
-		motor.move(-550,360, true);
+		motor.move(inputSpeed,360);
 		MindstormCommand command = connection.getLastSentCommand();
-		assertEquals(DIRECT_COMMAND_HEADER,command.getRawCommand()[0]);
+
+		byte[] setOutputState = command.getRawCommand();
+		assertEquals(DIRECT_COMMAND_HEADER, setOutputState[0]);
+		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), setOutputState[1]); // 0x04
+		assertEquals(USED_PORT, setOutputState[2]);
+		assertEquals(expectedSpeed,setOutputState[3]);
+		assertEquals();
+
 
 		//assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), command.getRawCommand()[0]);
+
+
 	}
 
 	//Tests: move mit 0, negativer Geschwindigkeit, > 100 usw.
@@ -75,6 +84,12 @@ public class MotorTest extends AndroidTestCase {
 		MindstormCommand command = connection.getLastSentCommand();
 		assertEquals(DIRECT_COMMAND_HEADER,command.getRawCommand()[0]);
 		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), command.getRawCommand()[1]);
+
+
+
+
+
+
 	}
 
 	public void testMotorWithSpeedOverHundredPercent() {
