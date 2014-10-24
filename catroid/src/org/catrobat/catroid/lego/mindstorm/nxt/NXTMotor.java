@@ -157,7 +157,7 @@ public class NXTMotor implements MindstormMotor {
 			this.motorRegulationValue = motorRegulationValue;
 		}
 
-		private byte getByte() {
+		public byte getByte() {
 			return (byte)motorRegulationValue;
 		}
 	}
@@ -170,7 +170,7 @@ public class NXTMotor implements MindstormMotor {
 			this.motorRunStateValue = motorRunStateValue;
 		}
 
-		private byte getByte() {
+		public byte getByte() {
 			return (byte)motorRunStateValue;
 		}
 	}

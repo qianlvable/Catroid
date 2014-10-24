@@ -57,32 +57,31 @@ public class MotorTest extends AndroidTestCase {
 	}
 
 	public void testMotorSpeedOverHundred() {
-		byte expectedSpeed = 100;
-		int inputSpeed = 200;
-		byte motorRegulationSpeed = 0x01;
+
+		int inputSpeed = 120;
+		int degrees = 360;
+
+		byte motorRegulationSpeed = 0x01;  // getByte() set to public!
 		byte expectedTurnRatio = 100;
 
-		motor.move(inputSpeed,360);
-		MindstormCommand command = connection.getLastSentCommand();
-
+		motor.move(inputSpeed, degrees);
+		MindstormCommand command = this.connection.getLastSentCommand();
 		byte[] setOutputState = command.getRawCommand();
 
 		assertEquals(DIRECT_COMMAND_HEADER, setOutputState[0]);
 		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), setOutputState[1]); // 0x04
 		assertEquals(USED_PORT, setOutputState[2]);
-		assertEquals(expectedSpeed,setOutputState[3]);
+
+		assertTrue(inputSpeed > 100 && setOutputState[3] == 100);
+
 		assertEquals(NXTMotor.MotorMode.BREAK | NXTMotor.MotorMode.ON |
 				NXTMotor.MotorMode.REGULATED, setOutputState[4]);
 		assertEquals(motorRegulationSpeed,setOutputState[5]);
 		assertEquals(expectedTurnRatio, setOutputState[6]);
-		//assertEquals(,setOutputState[7]);
-
-
-
+		assertEquals(NXTMotor.MotorRunState.RUNNING.getByte(), setOutputState[7]);
+		assertEquals((byte)degrees,setOutputState[8]); // Error... Loss of data
 
 		//assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), command.getRawCommand()[0]);
-
-
 	}
 
 	//Tests: move mit 0, negativer Geschwindigkeit, > 100 usw.
@@ -93,11 +92,6 @@ public class MotorTest extends AndroidTestCase {
 		MindstormCommand command = connection.getLastSentCommand();
 		assertEquals(DIRECT_COMMAND_HEADER,command.getRawCommand()[0]);
 		assertEquals(CommandByte.SET_OUTPUT_STATE.getByte(), command.getRawCommand()[1]);
-
-
-
-
-
 
 	}
 
