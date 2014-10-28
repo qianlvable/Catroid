@@ -28,44 +28,123 @@ import android.test.AndroidTestCase;
 import org.catrobat.catroid.lego.mindstorm.MindstormCommand;
 import org.catrobat.catroid.lego.mindstorm.nxt.CommandByte;
 import org.catrobat.catroid.lego.mindstorm.nxt.CommandType;
+import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTI2CUltraSonicSensor;
+import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTLightSensor;
 import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTSensor;
 import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTSensorMode;
 import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTSensorType;
+import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTSoundSensor;
 import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTTouchSensor;
 
 public class SensorTests extends AndroidTestCase {
 
 	private static final byte DIRECT_COMMAND_WITHOUT_REPLY = (byte) 0x80;
+	private static final byte DIRECT_COMMAND_WITH_REPLY = (byte) 0x00;
 	private static final byte PORT_NR_0 = 0;
 	private static final byte PORT_NR_1 = 1;
 	private static final byte PORT_NR_2 = 2;
 	private static final byte PORT_NR_3 = 3;
 
-	public void getSensorValue() {
+	public void testGetSensorValue() {
 		MindstormTestConnection connection = new MindstormTestConnection();
-		NXTSensor touchSensor = new NXTTouchSensor(0, connection);
+		NXTSensor sensor = new NXTTouchSensor(PORT_NR_0, connection);
 
-		touchSensor.getValue();
+		sensor.getValue();
 		MindstormCommand command = connection.getLastSentCommand();
 
 		byte[] rawCommand = command.getRawCommand();
 
-		assertEquals((byte)(DIRECT_COMMAND_WITHOUT_REPLY), rawCommand[0]);
+		assertEquals(DIRECT_COMMAND_WITH_REPLY, rawCommand[0]);
 		assertEquals(CommandByte.GET_INPUT_VALUES.getByte(), rawCommand[1]);
 		assertEquals(PORT_NR_0, rawCommand[2]);
 	}
 
-	public void setSensorModeTouch(){
-//		MindstormTestConnection connection = new MindstormTestConnection();
-//		NXTSensor touchSensor = new NXTTouchSensor(0, connection);
-//
-//		touchSensor.getValue();
-//		MindstormCommand command = connection.getLastSentCommand();
-//
-//		byte[] rawCommand = command.getRawCommand();
-//
-//		assertEquals((byte)(DIRECT_COMMAND_WITHOUT_REPLY), rawCommand[0]);
-//		assertEquals(CommandByte.GET_INPUT_VALUES.getByte(), rawCommand[1]);
-//		assertEquals(PORT_NR_0, rawCommand[2]);
+	public void testSetSensorModeTouch(){
+		MindstormTestConnection connection = new MindstormTestConnection();
+		NXTSensor sensor = new NXTTouchSensor(PORT_NR_0, connection);
+
+		sensor.getValue();
+
+		MindstormCommand command = null;
+		MindstormCommand first_command = connection.getLastSentCommand();
+		while(first_command != null) {
+			command = first_command;
+			first_command = connection.getLastSentCommand();
+		}
+
+		byte[] rawCommand = command.getRawCommand();
+
+//		assertEquals(DIRECT_COMMAND_WITHOUT_REPLY, rawCommand[0]);
+		assertEquals(CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
+		assertEquals(PORT_NR_0, rawCommand[2]);
+		assertEquals(NXTSensorType.TOUCH.getByte(), rawCommand[3]);
+		assertEquals(NXTSensorMode.BOOL.getByte(), rawCommand[4]);
+	}
+
+	public void testSetSensorModeSound(){
+		MindstormTestConnection connection = new MindstormTestConnection();
+		NXTSensor sensor = new NXTSoundSensor(PORT_NR_1, connection);
+
+		sensor.getValue();
+
+		MindstormCommand command = null;
+		MindstormCommand first_command = connection.getLastSentCommand();
+		while(first_command != null) {
+			command = first_command;
+			first_command = connection.getLastSentCommand();
+		}
+
+		byte[] rawCommand = command.getRawCommand();
+
+//		assertEquals(DIRECT_COMMAND_WITHOUT_REPLY, rawCommand[0]);
+		assertEquals(CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
+		assertEquals(PORT_NR_1, rawCommand[2]);
+		assertEquals(NXTSensorType.SOUND_DBA.getByte(), rawCommand[3]);
+		assertEquals(NXTSensorMode.Percent.getByte(), rawCommand[4]);
+	}
+
+	public void testSetSensorModeLight(){
+		MindstormTestConnection connection = new MindstormTestConnection();
+		NXTSensor sensor = new NXTLightSensor(PORT_NR_2, connection);
+
+		sensor.getValue();
+
+		MindstormCommand command = null;
+		MindstormCommand first_command = connection.getLastSentCommand();
+		while(first_command != null) {
+			command = first_command;
+			first_command = connection.getLastSentCommand();
+		}
+
+		byte[] rawCommand = command.getRawCommand();
+
+//		assertEquals(DIRECT_COMMAND_WITHOUT_REPLY, rawCommand[0]);
+		assertEquals(CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
+		assertEquals(PORT_NR_2, rawCommand[2]);
+		assertEquals(NXTSensorType.LIGHT_INACTIVE.getByte(), rawCommand[3]);
+		assertEquals(NXTSensorMode.Percent.getByte(), rawCommand[4]);
+	}
+
+	public void testSetSensorModeUltraSonic(){
+		MindstormTestConnection connection = new MindstormTestConnection();
+		NXTI2CUltraSonicSensor sensor = new NXTI2CUltraSonicSensor(connection);
+
+		sensor.singleShot(true);
+		sensor.getValue();
+
+		MindstormCommand command = null;
+		MindstormCommand first_command = connection.getLastSentCommand();
+		while(first_command != null) {
+			command = first_command;
+			first_command = connection.getLastSentCommand();
+		}
+
+		byte[] rawCommand = command.getRawCommand();
+
+//		assertEquals(DIRECT_COMMAND_WITHOUT_REPLY, rawCommand[0]);
+		assertEquals(CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
+		assertEquals(PORT_NR_3, rawCommand[2]);
+		assertEquals(NXTSensorType.LOW_SPEED_9V.getByte(), rawCommand[3]);
+		assertEquals(NXTSensorMode.RAW.getByte(), rawCommand[4]);
 	}
 }

@@ -25,6 +25,9 @@ package org.catrobat.catroid.test.mindstorms.nxt;
 
 import org.catrobat.catroid.lego.mindstorm.MindstormCommand;
 import org.catrobat.catroid.lego.mindstorm.MindstormConnection;
+import org.catrobat.catroid.lego.mindstorm.nxt.CommandByte;
+import org.catrobat.catroid.lego.mindstorm.nxt.CommandType;
+import org.catrobat.catroid.lego.mindstorm.nxt.NXTReply;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -58,7 +61,7 @@ public class MindstormTestConnection implements MindstormConnection {
 	@Override
 	public byte[] sendAndReceive(MindstormCommand command) {
 		send(command);
-		return receive();
+		return receive(command);
 	}
 
 	@Override
@@ -67,8 +70,35 @@ public class MindstormTestConnection implements MindstormConnection {
 	}
 
 
-	protected byte[] receive() {
-		return null;
+	protected byte[] receive(MindstormCommand command) {
+		byte[] reply;
+		byte commandType = command.getRawCommand()[0];
+		byte commandByte = command.getRawCommand()[1];
+
+		if(commandType != 0x00)
+			return null;
+
+		if(commandByte == CommandByte.SET_INPUT_MODE.getByte()) {
+			byte inputPort = command.getRawCommand()[2];
+			reply = new byte[3];
+
+			reply[0] = CommandType.REPLY_COMMAND.getByte();
+			reply[1] = commandByte;
+			reply[2] = NXTReply.NO_ERROR;
+
+		} else if(commandByte == CommandByte.GET_INPUT_VALUES.getByte()){
+			byte inputPort = command.getRawCommand()[2];
+			reply = new byte[16];
+
+			reply[0] = CommandType.REPLY_COMMAND.getByte();
+			reply[1] = commandByte;
+			reply[2] = NXTReply.NO_ERROR;
+			reply[3] = inputPort;
+
+		} else
+			reply = null;
+
+		return reply;
 	}
 
 	public MindstormCommand getLastSentCommand(){

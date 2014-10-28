@@ -72,7 +72,7 @@ public class NXTSensorService implements CatrobatService, SharedPreferences.OnSh
 		sensorScheduler.resume();
 	}
 
-    public void destory() {
+    public void destroy() {
         sensorScheduler.shutdown();
 		preferences.unregisterOnSharedPreferenceChangeListener(this);
 	}

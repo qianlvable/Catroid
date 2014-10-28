@@ -86,7 +86,7 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 	public void disconnect() {
 		if (mindstormConnection.isConnected()) {
 			this.stopAllMovements();
-			sensorService.destory();
+			sensorService.destroy();
 			mindstormConnection.disconnect();
 		}
 	}
