@@ -38,19 +38,21 @@ public class MindstormTestConnection implements MindstormConnection {
 		this.sentCommands = new LinkedList<MindstormCommand>();
 	}
 
+	private boolean isConnected = false;
+
 	@Override
 	public void init() {
-
+		isConnected = true;
 	}
 
 	@Override
 	public boolean isConnected() {
-		return false;
+		return isConnected;
 	}
 
 	@Override
 	public void disconnect() {
-
+		isConnected = false;
 	}
 
 	@Override
@@ -64,8 +66,8 @@ public class MindstormTestConnection implements MindstormConnection {
 		this.sentCommands.add(command);
 	}
 
-	@Override
-	public byte[] receive() {
+
+	protected byte[] receive() {
 		return null;
 	}
 

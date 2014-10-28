@@ -32,6 +32,4 @@ public interface MindstormConnection {
 
 	public void send(MindstormCommand command);
 
-	public byte[] receive();
-
 }

@@ -65,23 +65,6 @@ public class MindstormConnectionTest extends AndroidTestCase {
 		}
 	}
 
-	public void testReceive() {
-		byte[] inputBuffer = new byte[] {4, 0, 3, 4, 5, 7};
-		ByteArrayInputStream inStream = new ByteArrayInputStream(inputBuffer);
-
-		MindstormConnectionImpl connection = new MindstormConnectionImpl(null);
-		Reflection.setPrivateField(connection, "nxtInputStream", inStream);
-
-		byte[] receivedBytes = connection.receive();
-
-		assertEquals("Wrong message length. Before there should be a header with 2 bytes defining the message length",
-				inputBuffer.length - HEADER_SIZE, receivedBytes.length);
-
-		for (int i = 0; i < receivedBytes.length; i++) {
-			assertEquals("Byte " + i + " is different", inputBuffer[i + HEADER_SIZE], receivedBytes[i]);
-		}
-	}
-
 	public void testSendAndReceive() {
 
 		byte[] inputBuffer = new byte[] {4, 0, 3, 4, 5, 7};

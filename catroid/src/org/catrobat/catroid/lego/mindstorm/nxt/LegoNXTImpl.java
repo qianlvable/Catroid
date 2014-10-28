@@ -44,7 +44,7 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 	private static final UUID LEGO_NXT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 	private static final String TAG = LegoNXTImpl.class.getSimpleName();
 
-	private MindstormConnection connection;
+	private MindstormConnection mindstormConnection;
 	private Context context;
 
 	private NXTMotor motorA;
@@ -74,7 +74,7 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 
 	@Override
 	public void setConnection(BluetoothConnection btConnection) {
-		this.connection = new MindstormConnectionImpl(btConnection);
+		this.mindstormConnection = new MindstormConnectionImpl(btConnection);
 	}
 
 	@Override
@@ -84,10 +84,10 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 
 	@Override
 	public void disconnect() {
-		if (connection.isConnected()) {
+		if (mindstormConnection.isConnected()) {
 			this.stopAllMovements();
 			sensorService.destory();
-			connection.disconnect();
+			mindstormConnection.disconnect();
 		}
 	}
 
@@ -101,7 +101,7 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 		command.append((byte) ((durationInMs & 0xFF00) >> 8));
 
 		try {
-			connection.send(command);
+			mindstormConnection.send(command);
 		}
 		catch (MindstormException e) {
 			Log.e(TAG, e.getMessage());
@@ -172,18 +172,9 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 		assignSensorsToPorts();
 	}
 
-	synchronized private void assignSensorsToPorts() {
-		NXTSensorService sensorService = getSensorService();
-
-		sensor1 = sensorService.createSensor1();
-		sensor2 = sensorService.createSensor2();
-		sensor3 = sensorService.createSensor3();
-		sensor4 = sensorService.createSensor4();
-	}
-
 	private NXTSensorService getSensorService() {
 		if (sensorService == null) {
-			sensorService = new NXTSensorService(context, connection);
+			sensorService = new NXTSensorService(context, mindstormConnection);
 			sensorService.registerOnSensorChangedListener(this);
 		}
 
@@ -192,13 +183,22 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 
 	@Override
 	public void initialise() {
-		connection.init();
+		mindstormConnection.init();
 
-		motorA = new NXTMotor(0, connection);
-		motorB = new NXTMotor(1, connection);
-		motorC = new NXTMotor(2, connection);
+		motorA = new NXTMotor(0, mindstormConnection);
+		motorB = new NXTMotor(1, mindstormConnection);
+		motorC = new NXTMotor(2, mindstormConnection);
 
 		assignSensorsToPorts();
+	}
+
+	synchronized private void assignSensorsToPorts() {
+		NXTSensorService sensorService = getSensorService();
+
+		sensor1 = sensorService.createSensor1();
+		sensor2 = sensorService.createSensor2();
+		sensor3 = sensorService.createSensor3();
+		sensor4 = sensorService.createSensor4();
 	}
 
 	@Override

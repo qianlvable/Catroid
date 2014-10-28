@@ -102,8 +102,7 @@ public class MindstormConnectionImpl implements MindstormConnection {
 		}
 	}
 
-	@Override
-	public byte[] receive() {
+	protected byte[] receive() {
 		byte[] data = new byte[2];
 		byte[] payload;
 		int expectedLength = 0;
