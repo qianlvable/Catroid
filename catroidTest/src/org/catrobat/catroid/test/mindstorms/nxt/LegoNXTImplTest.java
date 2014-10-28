@@ -28,6 +28,7 @@ import android.preference.PreferenceManager;
 import android.test.AndroidTestCase;
 
 import org.catrobat.catroid.R;
+import org.catrobat.catroid.lego.mindstorm.MindstormCommand;
 import org.catrobat.catroid.lego.mindstorm.MindstormConnection;
 import org.catrobat.catroid.lego.mindstorm.nxt.LegoNXT;
 import org.catrobat.catroid.lego.mindstorm.nxt.LegoNXTImpl;
@@ -111,6 +112,7 @@ public class LegoNXTImplTest extends AndroidTestCase {
 
 		nxt.initialise();
 
+
 		assertNull("Sensor 1 should not be initialized", nxt.getSensor1());
 
 		editor = preferences.edit();
@@ -131,4 +133,28 @@ public class LegoNXTImplTest extends AndroidTestCase {
 		assertTrue("Sensor 1 is of wrong instance, SensorFactory may has an error",
 				nxt.getSensor1() instanceof NXTTouchSensor);
 	}
+
+	public void testPlayToneHzOverMaxValue() {
+
+		// MaxHz = 14000;
+		int inputHz = 16000;
+		int expectedHz = 14000;
+		int durationInMs = 5000;
+
+		LegoNXT nxt = new LegoNXTImpl(this.applicationContext);
+		MindstormTestConnection connection = new MindstormTestConnection();
+		Reflection.setPrivateField(nxt, "mindstormConnection", connection);
+		nxt.playTone(inputHz, durationInMs);
+
+		MindstormCommand command = connection.getLastSentCommand();
+		byte[] setOutputState = command.getRawCommand();
+
+		//assertEquals("Expected Hz over maximum Value (max. Value = 14000)", expectedHz, setOutputState[2]);
+
+
+	}
+
+
+
+
 }

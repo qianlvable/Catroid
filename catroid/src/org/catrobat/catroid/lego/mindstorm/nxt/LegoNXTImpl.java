@@ -93,8 +93,18 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 
 	@Override
 	public void playTone(int frequencyInHz, int durationInMs) {
-		Command command = new Command(CommandType.DIRECT_COMMAND, CommandByte.PLAY_TONE, false);
 
+		if(durationInMs <= 0) {
+			return;
+		}
+		if(frequencyInHz > 14000) {
+			frequencyInHz = 14000;
+		}
+		else if(frequencyInHz < 200) {
+			frequencyInHz = 200;
+		}
+
+		Command command = new Command(CommandType.DIRECT_COMMAND, CommandByte.PLAY_TONE, false);
 		command.append((byte)(frequencyInHz & 0x00FF));
 		command.append((byte)((frequencyInHz & 0xFF00) >> 8));
 		command.append((byte) (durationInMs & 0x00FF));
