@@ -57,8 +57,8 @@ public class MindstormConnectionTest extends AndroidTestCase {
 
 		assertEquals("Wrong message length. Before there should be a header with 2 bytes defining the message length",
 				expectedMessage.length + HEADER_SIZE, sentBytes.length);
-		assertEquals("Header should be the size of the message.", expectedMessage.length, sentBytes[0]);
-		assertEquals(0, sentBytes[1]);
+		assertEquals("Header should be the size of the message.", (byte)expectedMessage.length, sentBytes[0]);
+		assertEquals("Header should be the size of the message.", (byte)(expectedMessage.length >> 8), sentBytes[1]);
 
 		for (int i = 0; i < expectedMessage.length; i++) {
 			assertEquals("Byte " + i + " is different", expectedMessage[i], sentBytes[i + HEADER_SIZE]);
@@ -89,7 +89,7 @@ public class MindstormConnectionTest extends AndroidTestCase {
 		assertEquals("Wrong message length. Before there should be a header with 2 bytes defining the message length",
 				expectedMessage.length + HEADER_SIZE, sentBytes.length);
 		assertEquals("Header should be the size of the message.", expectedMessage.length, sentBytes[0]);
-		assertEquals(0, sentBytes[1]);
+		assertEquals("Header should be the size of the message.", (byte)(expectedMessage.length >> 8), sentBytes[1]);
 
 		for (int i = 0; i < expectedMessage.length; i++) {
 			assertEquals("Byte " + i + " is different", expectedMessage[i], sentBytes[i + HEADER_SIZE]);

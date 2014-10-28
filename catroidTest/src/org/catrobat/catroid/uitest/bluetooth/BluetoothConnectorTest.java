@@ -24,15 +24,11 @@ package org.catrobat.catroid.uitest.bluetooth;
 
 import android.app.Activity;
 import android.app.Instrumentation;
-import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.Intent;
 import android.widget.ListView;
 
 import org.catrobat.catroid.bluetooth.BTConnectDeviceActivity;
 import org.catrobat.catroid.bluetooth.BTDeviceConnector;
-import org.catrobat.catroid.bluetooth.BTDeviceConnectorImpl;
 import org.catrobat.catroid.bluetooth.BTDeviceFactory;
 import org.catrobat.catroid.bluetooth.BTDeviceService;
 import org.catrobat.catroid.bluetooth.BluetoothConnection;
@@ -119,7 +115,7 @@ public class BluetoothConnectorTest extends BaseActivityInstrumentationTestCase<
 
 		BluetoothTestService service = ServiceProvider.getService(TEST_SERVICE);
 
-		assertNotNull(service);
+		assertNotNull("Service already registered, should not be null here.", service);
 		service.connect();
 
 		byte[] expectedMessage = new byte[] {1,2,3};

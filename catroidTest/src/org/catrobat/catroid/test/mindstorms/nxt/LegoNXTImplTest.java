@@ -74,9 +74,9 @@ public class LegoNXTImplTest extends AndroidTestCase {
 		Thread.sleep(PREFERENCES_SAVE_DELAY); // Preferences need some time to get saved
 
 
-		assertFalse(connection.isConnected());
+		assertFalse("Connection should not yet be in connected state.", connection.isConnected());
 		nxt.initialise();
-		assertTrue(connection.isConnected());
+		assertTrue("Connection should be in connected state.", connection.isConnected());
 
 		assertNotNull("Motor A not initialized correctly", nxt.getMotorA());
 		assertNotNull("Motor B not initialized correctly", nxt.getMotorB());

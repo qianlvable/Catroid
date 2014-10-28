@@ -23,6 +23,8 @@
 
 package org.catrobat.catroid.test.mindstorms.nxt;
 
+import junit.framework.Assert;
+
 import org.catrobat.catroid.lego.mindstorm.MindstormCommand;
 import org.catrobat.catroid.lego.mindstorm.MindstormConnection;
 import org.catrobat.catroid.lego.mindstorm.nxt.CommandByte;
@@ -33,6 +35,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class MindstormTestConnection implements MindstormConnection {
+
+	public void MindstormTestConnection() {
+		Assert.assertTrue(true);
+	}
 
 	private Queue<MindstormCommand> sentCommands;
 
