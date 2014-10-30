@@ -112,7 +112,6 @@ public class LegoNXTImplTest extends AndroidTestCase {
 
 		nxt.initialise();
 
-
 		assertNull("Sensor 1 should not be initialized", nxt.getSensor1());
 
 		editor = preferences.edit();
@@ -134,6 +133,24 @@ public class LegoNXTImplTest extends AndroidTestCase {
 				nxt.getSensor1() instanceof NXTTouchSensor);
 	}
 
+	public void testSimplePlayToneTest() {
+
+		int inputHz = 10000;
+		int expectedHz = 10000;
+		int durationInMs = 3000;
+
+		LegoNXT nxt = new LegoNXTImpl(this.applicationContext);
+		MindstormTestConnection connection = new MindstormTestConnection();
+		Reflection.setPrivateField(nxt, "mindstormConnection", connection);
+		nxt.playTone(inputHz, durationInMs);
+
+		MindstormCommand command = connection.getLastSentCommand();
+		byte[] setOutputState = command.getRawCommand();
+
+		assertEquals("Expected Hz not same as input Hz", (byte)expectedHz, setOutputState[2]);
+		assertEquals("Expected Hz not same as input Hz", (byte)(expectedHz >> 8), setOutputState[3]);
+	}
+
 	public void testPlayToneHzOverMaxValue() {
 
 		// MaxHz = 14000;
@@ -149,12 +166,39 @@ public class LegoNXTImplTest extends AndroidTestCase {
 		MindstormCommand command = connection.getLastSentCommand();
 		byte[] setOutputState = command.getRawCommand();
 
-		//assertEquals("Expected Hz over maximum Value (max. Value = 14000)", expectedHz, setOutputState[2]);
-
-
+		assertEquals("Expected Hz over maximum Value (max. Value = 14000)", (byte)expectedHz, setOutputState[2]);
+		assertEquals("Expected Hz over maximum Value (max. Value = 14000)", (byte)(expectedHz >> 8), setOutputState[3]);
 	}
 
+	public void testcheckDurationOfTone() {
 
+		int inputHz = 13000;
+		int inputDurationInMs = 6000;
+		int expectedDurationInMs = 6000;
 
+		LegoNXT nxt = new LegoNXTImpl(this.applicationContext);
+		MindstormTestConnection connection = new MindstormTestConnection();
+		Reflection.setPrivateField(nxt, "mindstormConnection", connection);
+		nxt.playTone(inputHz, inputDurationInMs);
 
+		MindstormCommand command = connection.getLastSentCommand();
+		byte[] setOutputState = command.getRawCommand();
+
+		assertEquals("Expected Duration not same as Input Duration", (byte)expectedDurationInMs, setOutputState[4]);
+		assertEquals("Expected Duration not same as Input Duration", (byte)(expectedDurationInMs >> 8), setOutputState[5]);
+	}
+
+	public void testWithZeroDuration() {
+
+		int inputHz = 13000;
+		int inputDurationInMs = 0;
+
+		LegoNXT nxt = new LegoNXTImpl(this.applicationContext);
+		MindstormTestConnection connection = new MindstormTestConnection();
+		Reflection.setPrivateField(nxt, "mindstormConnection", connection);
+		nxt.playTone(inputHz, inputDurationInMs);
+
+		MindstormCommand command = connection.getLastSentCommand();
+		assertEquals("LastSentCommand Should be NULL", null, command);
+	}
 }
