@@ -30,6 +30,8 @@ import org.catrobat.catroid.lego.mindstorm.MindstormException;
 import org.catrobat.catroid.lego.mindstorm.MindstormSensor;
 import org.catrobat.catroid.lego.mindstorm.nxt.*;
 
+import java.util.Locale;
+
 public abstract class NXTSensor implements MindstormSensor {
 
 	protected final int port;
@@ -152,7 +154,7 @@ public abstract class NXTSensor implements MindstormSensor {
 
 	@Override
 	public String getName() {
-		return String.format("%s_%s_%d", TAG, sensorType.name(), port);
+		return String.format(Locale.getDefault(), "%s_%s_%d", TAG, sensorType.name(), port);
 	}
 
 	@Override
