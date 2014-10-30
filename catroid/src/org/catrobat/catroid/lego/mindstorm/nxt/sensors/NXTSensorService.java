@@ -26,18 +26,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.SparseArray;
 
-import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.CatrobatService;
 import org.catrobat.catroid.lego.mindstorm.MindstormConnection;
-import org.catrobat.catroid.lego.mindstorm.MindstormException;
 import org.catrobat.catroid.ui.SettingsActivity;
 import org.catrobat.catroid.utils.Stopwatch;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -133,8 +130,9 @@ public class NXTSensorService implements CatrobatService, SharedPreferences.OnSh
 		}
 
 		for (OnSensorChangedListener listener : sensorChangedListeners) {
-			if (listener != null)
+			if (listener != null) {
 				listener.onSensorChanged();
+			}
 		}
 	}
 
@@ -172,10 +170,10 @@ public class NXTSensorService implements CatrobatService, SharedPreferences.OnSh
 			}
 		}
 
-		private Map<Integer, SensorTuple> registeredSensors = new HashMap<Integer, SensorTuple>();
+		private SparseArray<SensorTuple> registeredSensors = new SparseArray<SensorTuple>();
 		private static final int INITIAL_DELAY = 500;
 
-		synchronized public void add(NXTSensor sensor) {
+		public synchronized void add(NXTSensor sensor) {
 			remove(sensor.getConnectedPort());
 			ScheduledFuture scheduledFuture = sensorScheduler.scheduleWithFixedDelay(new SensorValueUpdater(sensor),
 					INITIAL_DELAY, sensor.getUpdateInterval(), TimeUnit.MILLISECONDS);
@@ -183,12 +181,12 @@ public class NXTSensorService implements CatrobatService, SharedPreferences.OnSh
 			registeredSensors.put(sensor.getConnectedPort(), new SensorTuple(scheduledFuture, sensor));
 		}
 
-		synchronized public void remove(NXTSensor sensor) {
+		public synchronized void remove(NXTSensor sensor) {
 			int port = sensor.getConnectedPort();
 			remove(port);
 		}
 
-		synchronized public void remove(int port) {
+		public synchronized void remove(int port) {
 			SensorTuple tuple = registeredSensors.get(port);
 			if (tuple != null) {
 				tuple.scheduledFuture.cancel(false);

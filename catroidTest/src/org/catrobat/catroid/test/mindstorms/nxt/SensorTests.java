@@ -27,7 +27,6 @@ import android.test.AndroidTestCase;
 
 import org.catrobat.catroid.lego.mindstorm.MindstormCommand;
 import org.catrobat.catroid.lego.mindstorm.nxt.CommandByte;
-import org.catrobat.catroid.lego.mindstorm.nxt.CommandType;
 import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTI2CUltraSonicSensor;
 import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTLightSensor;
 import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTSensor;
@@ -59,17 +58,17 @@ public class SensorTests extends AndroidTestCase {
 		assertEquals("Wrong port", PORT_NR_0, rawCommand[2]);
 	}
 
-	public void testSetSensorModeTouch(){
+	public void testSetSensorModeTouch() {
 		MindstormTestConnection connection = new MindstormTestConnection();
 		NXTSensor sensor = new NXTTouchSensor(PORT_NR_0, connection);
 
 		sensor.getValue();
 
 		MindstormCommand command = null;
-		MindstormCommand first_command = connection.getLastSentCommand();
-		while(first_command != null) {
-			command = first_command;
-			first_command = connection.getLastSentCommand();
+		MindstormCommand firstCommand = connection.getLastSentCommand();
+		while(firstCommand != null) {
+			command = firstCommand;
+			firstCommand = connection.getLastSentCommand();
 		}
 
 		byte[] rawCommand = command.getRawCommand();
@@ -81,17 +80,17 @@ public class SensorTests extends AndroidTestCase {
 		assertEquals("Wrong sensor mode", NXTSensorMode.BOOL.getByte(), rawCommand[4]);
 	}
 
-	public void testSetSensorModeSound(){
+	public void testSetSensorModeSound() {
 		MindstormTestConnection connection = new MindstormTestConnection();
 		NXTSensor sensor = new NXTSoundSensor(PORT_NR_1, connection);
 
 		sensor.getValue();
 
 		MindstormCommand command = null;
-		MindstormCommand first_command = connection.getLastSentCommand();
-		while(first_command != null) {
-			command = first_command;
-			first_command = connection.getLastSentCommand();
+		MindstormCommand firstCommand = connection.getLastSentCommand();
+		while(firstCommand != null) {
+			command = firstCommand;
+			firstCommand = connection.getLastSentCommand();
 		}
 
 		byte[] rawCommand = command.getRawCommand();
@@ -103,17 +102,17 @@ public class SensorTests extends AndroidTestCase {
 		assertEquals("Wrong sensor mode", NXTSensorMode.Percent.getByte(), rawCommand[4]);
 	}
 
-	public void testSetSensorModeLight(){
+	public void testSetSensorModeLight() {
 		MindstormTestConnection connection = new MindstormTestConnection();
 		NXTSensor sensor = new NXTLightSensor(PORT_NR_2, connection);
 
 		sensor.getValue();
 
 		MindstormCommand command = null;
-		MindstormCommand first_command = connection.getLastSentCommand();
-		while(first_command != null) {
-			command = first_command;
-			first_command = connection.getLastSentCommand();
+		MindstormCommand firstCommand = connection.getLastSentCommand();
+		while(firstCommand != null) {
+			command = firstCommand;
+			firstCommand = connection.getLastSentCommand();
 		}
 
 		byte[] rawCommand = command.getRawCommand();
@@ -125,7 +124,7 @@ public class SensorTests extends AndroidTestCase {
 		assertEquals("Wrong sensor mode", NXTSensorMode.Percent.getByte(), rawCommand[4]);
 	}
 
-	public void testSetSensorModeUltraSonic(){
+	public void testSetSensorModeUltraSonic() {
 		MindstormTestConnection connection = new MindstormTestConnection();
 		NXTI2CUltraSonicSensor sensor = new NXTI2CUltraSonicSensor(connection);
 
@@ -133,10 +132,10 @@ public class SensorTests extends AndroidTestCase {
 		sensor.getValue();
 
 		MindstormCommand command = null;
-		MindstormCommand first_command = connection.getLastSentCommand();
-		while(first_command != null) {
-			command = first_command;
-			first_command = connection.getLastSentCommand();
+		MindstormCommand firstCommand = connection.getLastSentCommand();
+		while(firstCommand != null) {
+			command = firstCommand;
+			firstCommand = connection.getLastSentCommand();
 		}
 
 		byte[] rawCommand = command.getRawCommand();

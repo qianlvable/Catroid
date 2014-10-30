@@ -85,13 +85,13 @@ public class BluetoothConnectorTest extends BaseActivityInstrumentationTestCase<
 	@Device
 	public void testBluetoothConnector() throws IOException {
 
-		final int REQUEST_CODE = 11;
+		final int requestCode = 11;
 
 		EmptyActivity emptyActivity = getActivity();
 		BTConnectDeviceActivity.setDeviceFactory(new BTDeviceTestFactory());
 
 		BTDeviceConnector connector = ServiceProvider.getService(CatrobatService.BLUETOOTH_DEVICE_CONNECTOR);
-		connector.connectDevice(TEST_SERVICE, emptyActivity, REQUEST_CODE);
+		connector.connectDevice(TEST_SERVICE, emptyActivity, requestCode);
 
 		solo.waitForActivity(BTConnectDeviceActivity.class);
 		solo.sleep(2000);
@@ -110,7 +110,7 @@ public class BluetoothConnectorTest extends BaseActivityInstrumentationTestCase<
 
 		solo.sleep(20000); //yes, has to be that long! waiting for auto connection timeout!
 
-		Instrumentation.ActivityResult result = getActivity().getActivityResult(REQUEST_CODE);
+		Instrumentation.ActivityResult result = getActivity().getActivityResult(requestCode);
 		assertEquals("Result should be OK", Activity.RESULT_OK, result.getResultCode());
 
 		BluetoothTestService service = ServiceProvider.getService(TEST_SERVICE);

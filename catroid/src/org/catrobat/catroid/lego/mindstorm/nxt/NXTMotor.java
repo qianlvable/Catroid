@@ -113,16 +113,16 @@ public class NXTMotor implements MindstormMotor {
 		public int tachoLimit; //Current limit on a movement in progress, if any
 
 		public void setSpeed(int speed) {
-			if(speed > 100){
+			if (speed > 100) {
 				this.speed = (byte)100;
 			}
-			else if(speed < -100){
+			else if (speed < -100) {
 				this.speed = (byte)-100;
 			}
-			else if(turnRatio > 100){
+			else if (turnRatio > 100) {
 				turnRatio = (byte)100;
 			}
-			else if(turnRatio < -100){
+			else if (turnRatio < -100) {
 				this.turnRatio = (byte)100;
 			}
 			else {

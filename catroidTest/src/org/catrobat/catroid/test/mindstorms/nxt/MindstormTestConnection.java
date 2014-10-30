@@ -36,14 +36,11 @@ import java.util.Queue;
 
 public class MindstormTestConnection implements MindstormConnection {
 
-	public void MindstormTestConnection() {
-		Assert.assertTrue(true);
-	}
-
 	private Queue<MindstormCommand> sentCommands;
 
 
 	public MindstormTestConnection() {
+		Assert.assertTrue("Need a assert in class", true);
 		this.sentCommands = new LinkedList<MindstormCommand>();
 	}
 
@@ -81,10 +78,11 @@ public class MindstormTestConnection implements MindstormConnection {
 		byte commandType = command.getRawCommand()[0];
 		byte commandByte = command.getRawCommand()[1];
 
-		if(commandType != 0x00)
+		if (commandType != 0x00) {
 			return null;
+		}
 
-		if(commandByte == CommandByte.SET_INPUT_MODE.getByte()) {
+		if (commandByte == CommandByte.SET_INPUT_MODE.getByte()) {
 			byte inputPort = command.getRawCommand()[2];
 			reply = new byte[3];
 
@@ -92,7 +90,7 @@ public class MindstormTestConnection implements MindstormConnection {
 			reply[1] = commandByte;
 			reply[2] = NXTReply.NO_ERROR;
 
-		} else if(commandByte == CommandByte.GET_INPUT_VALUES.getByte()){
+		} else if (commandByte == CommandByte.GET_INPUT_VALUES.getByte()) {
 			byte inputPort = command.getRawCommand()[2];
 			reply = new byte[16];
 
@@ -101,8 +99,9 @@ public class MindstormTestConnection implements MindstormConnection {
 			reply[2] = NXTReply.NO_ERROR;
 			reply[3] = inputPort;
 
-		} else
+		} else {
 			reply = null;
+		}
 
 		return reply;
 	}

@@ -33,7 +33,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class MindstormConnectionImpl implements MindstormConnection {
+
 	private BluetoothConnection bluetoothConnection;
+	private OutputStream nxtOutputStream = null;
+	private InputStream nxtInputStream = null;
+
+	private boolean isConnected = false;
 
 	public MindstormConnectionImpl(BluetoothConnection btConnection) {
 		this.bluetoothConnection = btConnection;
@@ -51,11 +56,6 @@ public class MindstormConnectionImpl implements MindstormConnection {
 			throw new MindstormException(e, "Cannot establish BtConnection");
 		}
 	}
-
-	private OutputStream nxtOutputStream = null;
-	private InputStream nxtInputStream = null;
-
-	private boolean isConnected = false;
 
 	@Override
 	public boolean isConnected() {
@@ -76,13 +76,13 @@ public class MindstormConnectionImpl implements MindstormConnection {
 	}
 
 	@Override
-	synchronized public byte[] sendAndReceive(MindstormCommand command) {
+	public synchronized byte[] sendAndReceive(MindstormCommand command) {
 		send(command);
 		return receive();
 	}
 
 	@Override
-	public void send(MindstormCommand command) {
+	public synchronized void send(MindstormCommand command) {
 		try {
 			int messageLength = command.getLength();
 			byte[] message = command.getRawCommand();
@@ -102,12 +102,12 @@ public class MindstormConnectionImpl implements MindstormConnection {
 		}
 	}
 
-	protected byte[] receive() {
+	protected synchronized byte[] receive() {
 		byte[] data = new byte[2];
 		byte[] payload;
 		int expectedLength = 0;
 		int replyLength = 0;
-		try{
+		try {
 			expectedLength = 2;
 			synchronized (nxtInputStream) {
 				replyLength = nxtInputStream.read(data, 0, 2);
@@ -117,11 +117,12 @@ public class MindstormConnectionImpl implements MindstormConnection {
 				replyLength = nxtInputStream.read(payload, 0, expectedLength);
 			}
 		}
-		catch (IOException e){
-			if( replyLength == 0){
+		catch (IOException e) {
+
+			if (replyLength == 0) {
 				throw new NXTException("No Reply");
 			}
-			else if(replyLength != expectedLength){
+			else if (replyLength != expectedLength) {
 				throw new MindstormException("Wrong Number of Bytes");
 			}
 			throw new MindstormException(e, "Read Error");

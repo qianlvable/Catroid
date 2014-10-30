@@ -27,7 +27,6 @@ import android.util.Log;
 
 import org.catrobat.catroid.bluetooth.BTDeviceService;
 import org.catrobat.catroid.bluetooth.BluetoothConnection;
-import org.catrobat.catroid.common.ServiceProvider;
 import org.catrobat.catroid.formulaeditor.Sensors;
 import org.catrobat.catroid.lego.mindstorm.MindstormConnection;
 import org.catrobat.catroid.lego.mindstorm.MindstormConnectionImpl;
@@ -36,7 +35,6 @@ import org.catrobat.catroid.lego.mindstorm.MindstormSensor;
 import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTSensor;
 import org.catrobat.catroid.lego.mindstorm.nxt.sensors.NXTSensorService;
 
-import java.io.IOException;
 import java.util.UUID;
 
 public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedListener {
@@ -94,13 +92,14 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 	@Override
 	public void playTone(int frequencyInHz, int durationInMs) {
 
-		if(durationInMs <= 0) {
+		if (durationInMs <= 0) {
 			return;
 		}
-		if(frequencyInHz > 14000) {
+
+		if (frequencyInHz > 14000) {
 			frequencyInHz = 14000;
 		}
-		else if(frequencyInHz < 200) {
+		else if (frequencyInHz < 200) {
 			frequencyInHz = 200;
 		}
 
@@ -141,7 +140,7 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 	}
 
 	@Override
-	synchronized public int getSensorValue(Sensors sensor) {
+	public synchronized int getSensorValue(Sensors sensor) {
 
 		switch (sensor) {
 			case NXT_SENSOR_1:
@@ -202,7 +201,7 @@ public class LegoNXTImpl implements LegoNXT, NXTSensorService.OnSensorChangedLis
 		assignSensorsToPorts();
 	}
 
-	synchronized private void assignSensorsToPorts() {
+	private synchronized void assignSensorsToPorts() {
 		NXTSensorService sensorService = getSensorService();
 
 		sensor1 = sensorService.createSensor1();
