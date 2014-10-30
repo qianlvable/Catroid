@@ -54,9 +54,9 @@ public class SensorTests extends AndroidTestCase {
 
 		byte[] rawCommand = command.getRawCommand();
 
-		assertEquals(DIRECT_COMMAND_WITH_REPLY, rawCommand[0]);
-		assertEquals(CommandByte.GET_INPUT_VALUES.getByte(), rawCommand[1]);
-		assertEquals(PORT_NR_0, rawCommand[2]);
+		assertEquals("Incorrect Header", DIRECT_COMMAND_WITH_REPLY, rawCommand[0]);
+		assertEquals("Wrong Command Byte", CommandByte.GET_INPUT_VALUES.getByte(), rawCommand[1]);
+		assertEquals("Wrong port", PORT_NR_0, rawCommand[2]);
 	}
 
 	public void testSetSensorModeTouch(){
@@ -75,10 +75,10 @@ public class SensorTests extends AndroidTestCase {
 		byte[] rawCommand = command.getRawCommand();
 
 //		assertEquals(DIRECT_COMMAND_WITHOUT_REPLY, rawCommand[0]);
-		assertEquals(CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
-		assertEquals(PORT_NR_0, rawCommand[2]);
-		assertEquals(NXTSensorType.TOUCH.getByte(), rawCommand[3]);
-		assertEquals(NXTSensorMode.BOOL.getByte(), rawCommand[4]);
+		assertEquals("Wrong CommandByte", CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
+		assertEquals("Wrong Port", PORT_NR_0, rawCommand[2]);
+		assertEquals("Wrong sensor type", NXTSensorType.TOUCH.getByte(), rawCommand[3]);
+		assertEquals("Wrong sensor mode", NXTSensorMode.BOOL.getByte(), rawCommand[4]);
 	}
 
 	public void testSetSensorModeSound(){
@@ -97,10 +97,10 @@ public class SensorTests extends AndroidTestCase {
 		byte[] rawCommand = command.getRawCommand();
 
 //		assertEquals(DIRECT_COMMAND_WITHOUT_REPLY, rawCommand[0]);
-		assertEquals(CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
-		assertEquals(PORT_NR_1, rawCommand[2]);
-		assertEquals(NXTSensorType.SOUND_DBA.getByte(), rawCommand[3]);
-		assertEquals(NXTSensorMode.Percent.getByte(), rawCommand[4]);
+		assertEquals("Wrong CommandByte", CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
+		assertEquals("Wrong port", PORT_NR_1, rawCommand[2]);
+		assertEquals("Wrong sensor Type", NXTSensorType.SOUND_DBA.getByte(), rawCommand[3]);
+		assertEquals("Wrong sensor mode", NXTSensorMode.Percent.getByte(), rawCommand[4]);
 	}
 
 	public void testSetSensorModeLight(){
@@ -119,10 +119,10 @@ public class SensorTests extends AndroidTestCase {
 		byte[] rawCommand = command.getRawCommand();
 
 //		assertEquals(DIRECT_COMMAND_WITHOUT_REPLY, rawCommand[0]);
-		assertEquals(CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
-		assertEquals(PORT_NR_2, rawCommand[2]);
-		assertEquals(NXTSensorType.LIGHT_INACTIVE.getByte(), rawCommand[3]);
-		assertEquals(NXTSensorMode.Percent.getByte(), rawCommand[4]);
+		assertEquals("Wrong CommandByte", CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
+		assertEquals("Wrong port", PORT_NR_2, rawCommand[2]);
+		assertEquals("Wrong sensor type", NXTSensorType.LIGHT_INACTIVE.getByte(), rawCommand[3]);
+		assertEquals("Wrong sensor mode", NXTSensorMode.Percent.getByte(), rawCommand[4]);
 	}
 
 	public void testSetSensorModeUltraSonic(){
@@ -142,9 +142,9 @@ public class SensorTests extends AndroidTestCase {
 		byte[] rawCommand = command.getRawCommand();
 
 //		assertEquals(DIRECT_COMMAND_WITHOUT_REPLY, rawCommand[0]);
-		assertEquals(CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
-		assertEquals(PORT_NR_3, rawCommand[2]);
-		assertEquals(NXTSensorType.LOW_SPEED_9V.getByte(), rawCommand[3]);
-		assertEquals(NXTSensorMode.RAW.getByte(), rawCommand[4]);
+		assertEquals("Wrong command byte", CommandByte.SET_INPUT_MODE.getByte(), rawCommand[1]);
+		assertEquals("Wrong port", PORT_NR_3, rawCommand[2]);
+		assertEquals("Wrong sensor type", NXTSensorType.LOW_SPEED_9V.getByte(), rawCommand[3]);
+		assertEquals("Wrong sensor mode", NXTSensorMode.RAW.getByte(), rawCommand[4]);
 	}
 }
