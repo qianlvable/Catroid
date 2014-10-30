@@ -53,15 +53,15 @@ public class BluetoothConnectorTest extends BaseActivityInstrumentationTestCase<
 	// needed for testdevices
 	// Bluetooth server is running with a name that starts with 'kitty'
 	// e.g. kittyroid-0, kittyslave-0
-	//private static final String PAIRED_BLUETOOTH_SERVER_DEVICE_NAME = "kitty";
-	private static final String PAIRED_BLUETOOTH_SERVER_DEVICE_NAME = "ASUS";
+	private static final String PAIRED_BLUETOOTH_SERVER_DEVICE_NAME = "kitty";
+//	private static final String PAIRED_BLUETOOTH_SERVER_DEVICE_NAME = "ASUS";
 
 	// needed for testdevices
 	// unavailable device is paired with a name that starts with 'SWEET'
 	// e.g. SWEETHEART
 
-	private static final String PAIRED_UNAVAILABLE_DEVICE_NAME = "SWEET";
-	private static final String PAIRED_UNAVAILABLE_DEVICE_MAC = "00:23:4D:F5:A6:18";
+//	private static final String PAIRED_UNAVAILABLE_DEVICE_NAME = "SWEET";
+//	private static final String PAIRED_UNAVAILABLE_DEVICE_MAC = "00:23:4D:F5:A6:18";
 
 	private static final UUID COMMON_BT_TEST_UUID = UUID.fromString("fd2835bb-9d80-41e0-9721-5372b90342da");
 
