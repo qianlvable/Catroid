@@ -71,6 +71,7 @@ public class DragAndDropListView extends ListView implements OnLongClickListener
 	private boolean dimBackground;
 	private boolean dragNewBrick;
 	private boolean isScrolling;
+	private boolean isOneClickToDropBrick = true;
 
 	private long blinkAnimationTimestamp;
 
@@ -183,6 +184,17 @@ public class DragAndDropListView extends ListView implements OnLongClickListener
 			switch (action) {
 				case MotionEvent.ACTION_UP:
 				case MotionEvent.ACTION_CANCEL:
+					if (isOneClickToDropBrick){
+						scrollListWithDraggedItem(y);
+
+						dragTouchedListItem((int) event.getRawY());
+						dragItemInList(y, itemPosition);
+
+						dimBackground = true;
+					}else {
+						isOneClickToDropBrick = true;
+					}
+					
 					setDragViewAnimation(0);
 					dragAndDropListener.drop();
 
